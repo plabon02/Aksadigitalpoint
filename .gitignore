@@ -1,0 +1,7 @@
+*.user
+*.suo
+.vs/
+packages/
+node_modules/
+.DS_Store
+Thumbs.db

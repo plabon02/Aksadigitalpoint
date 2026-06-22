@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<customUI xmlns="http://schemas.microsoft.com/office/2006/01/customui">
+  <ribbon>
+    <tabs>
+      <tab id="tabAksa" label="AKSA 10X FASTER" insertAfterMso="TabHome">
+        
+        <!-- ============ PAGE GROUP ============ -->
+        <group id="grpPage" label="Page Setup">
+          <box id="boxPageTop" boxStyle="horizontal">
+            <button id="btnAgreementPage" size="normal" label="Agree" onAction="OnAgreementPage" tag="agree_page" getImage="GetImage" screentip="Agreements" supertip="Legal page, SutonnyMJ font for agreements" />
+            <button id="btnCvPage" size="normal" label="CV" onAction="OnCvPage" tag="cv_page" getImage="GetImage" screentip="CV" supertip="Set A4 page size, margins, and Arial font for CV" />
+          </box>
+          <box id="boxPageBottom" boxStyle="horizontal">
+            <button id="btnApplicationPage" size="normal" label="App" onAction="OnApplicationPage" tag="app_page" getImage="GetImage" screentip="Application" supertip="Set A4 page size, margins, and Arial font for application" />
+            <button id="btnQuestionPage" size="normal" label="Ques" onAction="OnQuestionPage" tag="question_size" getImage="GetImage" screentip="Question" supertip="Set A4 Landscape, 0.5in margins, SutonnyMJ 14pt, 2 columns" />
+          </box>
+          <menu id="mnuPageNumber" size="large" label="Page No." tag="page_number" getImage="GetImage" screentip="Page Number" supertip="Insert page number at cursor position">
+            <button id="btnPageNumBn" label="Bangla Num" tag="page_num_bn" getImage="GetImage" onAction="OnInsertPageNumber" />
+            <button id="btnPageNumEn" label="English Num" tag="page_num_en" getImage="GetImage" onAction="OnInsertPageNumber" />
+          </menu>
+        </group>
+
+        <!-- ============ SAVE GROUP ============ -->
+        <group id="grpSave" label="Save As">
+          <box id="boxSaveTop" boxStyle="horizontal">
+            <button id="btnFolderSelect" size="normal" label="Folder" onAction="OnFolderSelect" tag="save_folder" getImage="GetImage" screentip="Folder Select" supertip="Configure save folders for DOC, PDF, and JPG files" />
+            <button id="btnSaveDocFast" size="normal" label="Doc" onAction="OnSaveDoc" tag="save_doc" getImage="GetImage" screentip="Save Doc" supertip="Save document as DOCX in the configured folder" />
+          </box>
+          <box id="boxSaveBottom" boxStyle="horizontal">
+            <button id="btnSavePdfFast" size="normal" label="PDF" onAction="OnSavePdfFast" tag="save_pdf" getImage="GetImage" screentip="Save PDF" supertip="Save document as PDF in the configured folder" />
+            <button id="btnSaveJpgFast" size="normal" label="JPG" onAction="OnSaveJpgFast" tag="save_jpg" getImage="GetImage" getEnabled="GetEnabled" screentip="Save JPG" supertip="Save each page as separate JPG image" />
+          </box>
+          <button id="btnSaveCloseAll" size="large" label="Close" onAction="OnSaveCloseAll" tag="save_close" getImage="GetImage" screentip="Share" supertip="Save all open documents and close them" />
+
+          <menu id="mnuShare" size="large" label="Share" tag="share" getImage="GetImage" screentip="Share" supertip="Share document via Email, WhatsApp, Imo, or Telegram">
+            <button id="btnShareEmail" label="Email" tag="share_email" getImage="GetImage" onAction="OnShare" />
+            <button id="btnShareWhatsapp" label="WhatsApp" tag="share_whatsapp" getImage="GetImage" onAction="OnShare" />
+            <button id="btnShareImo" label="Imo" tag="share_imo" getImage="GetImage" onAction="OnShare" />
+            <button id="btnShareTelegram" label="Telegram" tag="share_telegram" getImage="GetImage" onAction="OnShare" />
+          </menu>
+        </group>
+
+        <!-- ============ SEARCH GROUP ============ -->
+        <group id="grpSearch" label="Search">
+          <editBox id="txtSearch" label="Search:" sizeString="WWWWWWWWWWWW" onChange="OnSearchChanged" />
+        </group>
+
+        <!-- ============ AGREEMENTS GROUP ============ -->
+        <group id="grpAgreements" label="Agreements">
+          <menu id="mnuPage1" size="large" label="Page 1" tag="page1" getImage="GetImage" screentip="Page 1 agreements" supertip="Open an agreement template from Page 1">
+            <button id="btnLandSale" label="Land Sale" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnLandMortgage" label="Land Mortgage" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnLandRent" label="Land Rent" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnHouseRent" label="House Rent" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnHouseSale" label="House Sale" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnShopRent" label="Shop Rent" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnShopSale" label="Shop Sale" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnGardenMortgage" label="Garden Mortgage" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnGardenHouseMortgage" label="Garden House Mortgage" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnCarSale" label="Car Sale" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnMotorcycleSale" label="Motorcycle Sale" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnStorage" label="Produce Storage" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnGoingAbroad" label="Going Abroad" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnConstruction" label="Construction" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnBabyTaxiSale" label="Baby Taxi/Auto Sale" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnMahr" label="Mahr" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnCngSale" label="CNG Sale" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnLandInstallment" label="Land Installment" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnPondMortgage" label="Pond Mortgage" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnPartnership" label="Partnership Business" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnLoanRepayment" label="Loan Repayment" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnBuildingMaterials" label="Building Materials" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnMoneyTransaction" label="Money Transaction" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnBoatSale" label="Boat/Trawler Sale" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnPoultryFarmRent" label="Poultry Farm Rent" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnCattleFarmSale" label="Cattle Farm Sale" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnFosterCare" label="Foster Care" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+          </menu>
+          <menu id="mnuPage2" size="large" label="Page 2" tag="page2" getImage="GetImage" screentip="Page 2 agreements" supertip="Open an agreement template from Page 2">
+            <button id="btnLandSale2" label="Land Sale" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnLandMortgage2" label="Land Mortgage" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnLandRent2" label="Land Rent" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnHouseRent2" label="House Rent" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnHouseSale2" label="House Sale" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnShopRent2" label="Shop Rent" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnShopSale2" label="Shop Sale" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnGardenMortgage2" label="Garden Mortgage" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnGardenHouseMortgage2" label="Garden House Mortgage" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnCarSale2" label="Car Sale" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnMotorcycleSale2" label="Motorcycle Sale" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnStorage2" label="Produce Storage" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnGoingAbroad2" label="Going Abroad" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnConstruction2" label="Construction" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnBabyTaxiSale2" label="Baby Taxi/Auto Sale" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnMahr2" label="Mahr" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnCngSale2" label="CNG Sale" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnLandInstallment2" label="Land Installment" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnPondMortgage2" label="Pond Mortgage" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnPartnership2" label="Partnership Business" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnLoanRepayment2" label="Loan Repayment" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnBuildingMaterials2" label="Building Materials" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnMoneyTransaction2" label="Money Transaction" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnBoatSale2" label="Boat/Trawler Sale" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnPoultryFarmRent2" label="Poultry Farm Rent" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnCattleFarmSale2" label="Cattle Farm Sale" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnFosterCare2" label="Foster Care" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+          </menu>
+          <menu id="mnuPage3" size="large" label="Page 3" tag="page3" getImage="GetImage" screentip="Page 3 agreements" supertip="Open an agreement template from Page 3">
+            <button id="btnLandSale3" label="Land Sale" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnLandMortgage3" label="Land Mortgage" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnLandRent3" label="Land Rent" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnHouseRent3" label="House Rent" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnHouseSale3" label="House Sale" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnShopRent3" label="Shop Rent" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnShopSale3" label="Shop Sale" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnGardenMortgage3" label="Garden Mortgage" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnGardenHouseMortgage3" label="Garden House Mortgage" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnCarSale3" label="Car Sale" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnMotorcycleSale3" label="Motorcycle Sale" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnStorage3" label="Produce Storage" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnGoingAbroad3" label="Going Abroad" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnConstruction3" label="Construction" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnBabyTaxiSale3" label="Baby Taxi/Auto Sale" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnMahr3" label="Mahr" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnCngSale3" label="CNG Sale" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnLandInstallment3" label="Land Installment" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnPondMortgage3" label="Pond Mortgage" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnPartnership3" label="Partnership Business" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnLoanRepayment3" label="Loan Repayment" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnBuildingMaterials3" label="Building Materials" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnMoneyTransaction3" label="Money Transaction" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnBoatSale3" label="Boat/Trawler Sale" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnPoultryFarmRent3" label="Poultry Farm Rent" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnCattleFarmSale3" label="Cattle Farm Sale" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+            <button id="btnFosterCare3" label="Foster Care" tag="list" getImage="GetImage" onAction="OnAgreementPreset" />
+          </menu>
+        </group>
+
+        <!-- ============ CV & RESUME GROUP ============ -->
+        <group id="grpCvResume" label="CV &amp; Resume">
+          <menu id="mnuBengali" size="large" label="Bengali" tag="bengali" getImage="GetImage" screentip="Bangla CV Templates" supertip="Open a Bangla CV template">
+            <button id="btnBengaliProfessional" label="Professional CV" tag="professional" getImage="GetImage" onAction="OnCvProfessional" />
+            <button id="btnBengaliJob" label="Job CV" tag="modern" getImage="GetImage" onAction="OnCvModern" />
+          </menu>
+          <menu id="mnuEnglish" size="large" label="English" tag="english" getImage="GetImage" screentip="English CV Templates" supertip="Open an English CV template">
+            <button id="btnEngProfessional" label="Professional CV" tag="professional" getImage="GetImage" onAction="OnCvProfessional" />
+            <button id="btnEngModern" label="Modern CV" tag="modern" getImage="GetImage" onAction="OnCvModern" />
+            <button id="btnEngCoverLetter" label="Cover Letter" tag="cover" getImage="GetImage" onAction="OnCoverLetter" />
+            <menuSeparator id="sepCvEng" />
+            <button id="btnEngSkills" label="Skills Table" tag="skills" getImage="GetImage" onAction="OnInsertSkills" />
+            <button id="btnEngExperience" label="Experience" tag="experience" getImage="GetImage" onAction="OnInsertExperience" />
+            <button id="btnEngEducation" label="Education" tag="education" getImage="GetImage" onAction="OnInsertEducation" />
+          </menu>
+        </group>
+
+        <!-- ============ MATH GROUP ============ -->
+        <group id="grpMath" label="Math">
+          <box id="boxMathTop" boxStyle="horizontal">
+            <button id="btnNumberToWord" size="normal" label="N→W" onAction="OnNumberToWord" tag="number_word" getImage="GetImage" getEnabled="GetEnabled" screentip="Number to Word" supertip="Convert selected number to words" />
+            <button id="btnNumberToWordBn" size="normal" label="BN N→W" onAction="OnNumberToWordBn" tag="nb_word" getImage="GetImage" getEnabled="GetEnabled" screentip="Number to Word (Bangla)" supertip="Convert selected number to Bengali words" />
+          </box>
+          <box id="boxMathBottom" boxStyle="horizontal">
+            <button id="btnDateBn" size="normal" label="Date BN" onAction="OnInsertDate" tag="date_bn" getImage="GetImage" getEnabled="GetEnabled" screentip="Bangla Date" supertip="Insert today's date in Bengali format" />
+            <button id="btnDateEn" size="normal" label="Date EN" onAction="OnInsertDate" tag="date_en" getImage="GetImage" getEnabled="GetEnabled" screentip="English Date" supertip="Insert today's date in English format" />
+          </box>
+          <menu id="mnuConvertFont" size="large" label="Bijoy" tag="font_conv" getImage="GetImage" getEnabled="GetEnabled" screentip="Font Convert" supertip="Convert between Bijoy and Unicode">
+            <button id="btnB2U" label="Bijoy to Unicode" tag="b2u" getImage="GetImage" getEnabled="GetEnabled" onAction="OnFontConvert" />
+            <button id="btnU2B" label="Unicode to Bijoy" tag="u2b" getImage="GetImage" getEnabled="GetEnabled" onAction="OnFontConvert" />
+          </menu>
+          <menu id="mnuAnna" size="large" label="16 Anna" tag="anna_menu" getImage="GetImage" getEnabled="GetEnabled" screentip="Anna fractions" supertip="Insert Bengali anna fraction symbols">
+            <button id="btnAnna1" label="1 Anna" tag="ana_1" getImage="GetImage" getEnabled="GetEnabled" onAction="OnInsertAnna" />
+            <button id="btnAnna2" label="2 Anna" tag="ana_2" getImage="GetImage" getEnabled="GetEnabled" onAction="OnInsertAnna" />
+            <button id="btnAnna3" label="3 Anna" tag="ana_3" getImage="GetImage" getEnabled="GetEnabled" onAction="OnInsertAnna" />
+            <button id="btnAnna4" label="4 Anna" tag="ana_4" getImage="GetImage" getEnabled="GetEnabled" onAction="OnInsertAnna" />
+            <button id="btnAnna5" label="5 Anna" tag="ana_5" getImage="GetImage" getEnabled="GetEnabled" onAction="OnInsertAnna" />
+            <button id="btnAnna6" label="6 Anna" tag="ana_6" getImage="GetImage" getEnabled="GetEnabled" onAction="OnInsertAnna" />
+            <button id="btnAnna7" label="7 Anna" tag="ana_7" getImage="GetImage" getEnabled="GetEnabled" onAction="OnInsertAnna" />
+            <button id="btnAnna8" label="8 Anna" tag="ana_8" getImage="GetImage" getEnabled="GetEnabled" onAction="OnInsertAnna" />
+            <button id="btnAnna9" label="9 Anna" tag="ana_9" getImage="GetImage" getEnabled="GetEnabled" onAction="OnInsertAnna" />
+            <button id="btnAnna10" label="10 Anna" tag="ana_10" getImage="GetImage" getEnabled="GetEnabled" onAction="OnInsertAnna" />
+            <button id="btnAnna11" label="11 Anna" tag="ana_11" getImage="GetImage" getEnabled="GetEnabled" onAction="OnInsertAnna" />
+            <button id="btnAnna12" label="12 Anna" tag="ana_12" getImage="GetImage" getEnabled="GetEnabled" onAction="OnInsertAnna" />
+            <button id="btnAnna13" label="13 Anna" tag="ana_13" getImage="GetImage" getEnabled="GetEnabled" onAction="OnInsertAnna" />
+            <button id="btnAnna14" label="14 Anna" tag="ana_14" getImage="GetImage" getEnabled="GetEnabled" onAction="OnInsertAnna" />
+            <button id="btnAnna15" label="15 Anna" tag="ana_15" getImage="GetImage" getEnabled="GetEnabled" onAction="OnInsertAnna" />
+            <button id="btnAnna16" label="16 Anna" tag="ana_16" getImage="GetImage" getEnabled="GetEnabled" onAction="OnInsertAnna" />
+          </menu>
+        </group>
+
+        <!-- ============ AKSA AI GROUP ============ -->
+        <group id="grpAI" label="AKSA AI">
+          <menu id="mnuAksaAI" size="large" label="AKSA AI" tag="aksa_ai" getImage="GetImage" getEnabled="GetEnabled" screentip="AKSA AI" supertip="AI-powered tools for Bengali documents">
+            <button id="btnAiWrite" label="Write" tag="ai_write" getImage="GetImage" getEnabled="GetEnabled" onAction="OnAiWrite" screentip="AI Write" supertip="Write a document/agreement in Bengali" />
+            <button id="btnAiFix" label="Fix" tag="ai_fix" getImage="GetImage" getEnabled="GetEnabled" onAction="OnAiFix" screentip="AI Fix" supertip="Fix Bengali grammar and spelling" />
+            <button id="btnAiSummarize" label="Summarize" tag="ai_summarize" getImage="GetImage" getEnabled="GetEnabled" onAction="OnAiSummarize" screentip="AI Summarize" supertip="Summarize selected Bengali text" />
+          </menu>
+        </group>
+
+        <!-- ============ ABOUT GROUP ============ -->
+        <group id="grpAbout" label="About">
+          <button id="btnRegister" size="large" label="License" onAction="OnRegister" tag="register" getImage="GetImage" screentip="License" supertip="View trial status or activate license" />
+          <button id="btnAboutMe" size="large" label="About Me" onAction="OnAboutMe" tag="about_me" getImage="GetImage" screentip="About Me" supertip="About the developer of AKSA 10X FASTER" />
+          <button id="btnApiSettings" size="large" label="API Settings" onAction="OnApiSettings" tag="api_settings" getImage="GetImage" screentip="AI Settings" supertip="Configure AI API provider and key" />
+        </group>
+
+      </tab>
+    </tabs>
+  </ribbon>
+</customUI>

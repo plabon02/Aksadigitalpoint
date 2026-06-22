@@ -1,0 +1,20 @@
+AKSA 10X FASTER END USER LICENSE AGREEMENT
+
+1. GRANT OF LICENSE: This software is licensed, not sold. You are granted
+   a non-exclusive, non-transferable license to use the software on a
+   single computer.
+
+2. TRIAL PERIOD: You may use the software for a 30-day trial period
+   without payment. After the trial, some premium features (JPG save,
+   Math tools, AI features) will be locked until a valid license key
+   is purchased.
+
+3. LICENSE KEY: Purchasing a license grants you continued access to all
+   features for the chosen duration (6 months, 1 year, 2 years, or
+   lifetime).
+
+4. RESTRICTIONS: You may not distribute, modify, reverse engineer, or
+   rent this software.
+
+5. DISCLAIMER: This software is provided 'as is' without warranty of any
+   kind. The author is not liable for any damages arising from its use.

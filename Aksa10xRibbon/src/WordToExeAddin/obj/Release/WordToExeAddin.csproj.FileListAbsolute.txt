@@ -1,0 +1,12 @@
+E:\Website\MS Office\MS Office\WordToExeAddin\obj\Release\WordToExeAddin.csproj.AssemblyReference.cache
+E:\Website\MS Office\MS Office\WordToExeAddin\obj\Release\WordToExeAddin.csproj.CoreCompileInputs.cache
+E:\Website\MS Office\MS Office\WordToExeAddin\bin\Release\WordAddIn.dll
+E:\Website\MS Office\MS Office\WordToExeAddin\bin\Release\WordAddIn.pdb
+E:\Website\MS Office\MS Office\WordToExeAddin\obj\Release\WordAddIn.dll
+E:\Website\MS Office\MS Office\WordToExeAddin\obj\Release\WordAddIn.pdb
+E:\Website\MS Office\MS Office\Aksa10xRibbon\src\WordToExeAddin\bin\Release\WordAddIn.dll
+E:\Website\MS Office\MS Office\Aksa10xRibbon\src\WordToExeAddin\bin\Release\WordAddIn.pdb
+E:\Website\MS Office\MS Office\Aksa10xRibbon\src\WordToExeAddin\obj\Release\WordToExeAddin.csproj.AssemblyReference.cache
+E:\Website\MS Office\MS Office\Aksa10xRibbon\src\WordToExeAddin\obj\Release\WordToExeAddin.csproj.CoreCompileInputs.cache
+E:\Website\MS Office\MS Office\Aksa10xRibbon\src\WordToExeAddin\obj\Release\WordAddIn.dll
+E:\Website\MS Office\MS Office\Aksa10xRibbon\src\WordToExeAddin\obj\Release\WordAddIn.pdb

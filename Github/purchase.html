@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchase License – AKSA DIGITAL POINT</title>
+    <meta name="description" content="Purchase a license for AKSA 10X FASTER add-ins. Payment via bKash, Nagad or Rocket. Instant license key delivery within 24 hours.">
+    <meta name="keywords" content="buy license, purchase, AKSA 10X FASTER, bKash, Nagad, Rocket, 01670201266, license key">
+    <meta property="og:title" content="Purchase License – AKSA DIGITAL POINT">
+    <meta property="og:description" content="Purchase a license for AKSA 10X FASTER add-ins. bKash / Nagad / Rocket accepted.">
+    <meta property="og:image" content="images/icon.png">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="images/icon.png" type="image/png">
+    <link rel="stylesheet" href="css/style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo"><span class="gradient">AKSA</span> DIGITAL POINT</a>
+        <ul class="navlist">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="index.html#products">Add-ins</a></li>
+            <li><a href="index.html#pricing">Pricing</a></li>
+            <li><a href="request-key.html">Get License Key</a></li>
+        </ul>
+        <div class="right-header">
+            <a href="purchase.html" class="btn">Buy License <i class='bx bx-right-arrow-alt'></i></a>
+            <div class="menu-icon">
+                <div class="bar"></div>
+            </div>
+        </div>
+    </header>
+
+    <section class="page-hero">
+        <div class="container">
+            <h3>Get Licensed</h3>
+            <h1><span class="gradient">Purchase License</span></h1>
+            <p>Send payment and submit your transaction ID to receive your license key.</p>
+        </div>
+    </section>
+
+    <section class="form-section">
+        <div class="container">
+            <div class="purchase-layout">
+                <div class="payment-info">
+                    <h3>Send Payment To</h3>
+                    <div class="payment-method">
+                        <div class="payment-row">
+                            <span class="payment-label">bKash (Send Money)</span>
+                            <span class="payment-number"><strong>01670201266</strong></span>
+                        </div>
+                        <div class="payment-row">
+                            <span class="payment-label">Nagad (Send Money)</span>
+                            <span class="payment-number"><strong>01670201266</strong></span>
+                        </div>
+                        <div class="payment-row">
+                            <span class="payment-label">Rocket (Send Money)</span>
+                            <span class="payment-number"><strong>01670201266</strong></span>
+                        </div>
+                    </div>
+                    <div class="payment-instructions">
+                        <h4>Instructions</h4>
+                        <ol>
+                            <li>Send the exact amount to <strong>01670201266</strong> (bKash / Nagad / Rocket).</li>
+                            <li>Copy the <strong>Transaction ID</strong> (TrxID) from your SMS.</li>
+                            <li>Fill out the form and submit your TrxID.</li>
+                            <li>You will receive your license key via email within <strong>24 hours</strong>.</li>
+                        </ol>
+                    </div>
+                    <div class="payment-note">
+                        <strong>Note:</strong> Each add-in requires its own license. Select the add-in you want to purchase a key for. If you already have a license, purchasing a new plan will extend your expiry date.
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <form id="purchaseForm">
+                        <div class="form-group">
+                            <label for="product">Add-in</label>
+                            <select id="product" name="product" required>
+                                <option value="">Select add-in...</option>
+                                <option value="word">AKSA 10X FASTER — Word</option>
+                                <option value="excel">AKSA 10X FASTER — Excel</option>
+                                <option value="photoshop">AKSA 10X FASTER — Photoshop</option>
+                                <option value="illustrator">AKSA 10X FASTER — Illustrator</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="plan">License Plan</label>
+                            <select id="plan" name="plan" required>
+                                <option value="">Select your plan...</option>
+                                <option value="6mo">6 Months — 300 BDT</option>
+                                <option value="12mo">12 Months — 500 BDT</option>
+                                <option value="24mo">24 Months — 900 BDT</option>
+                                <option value="lifetime">Lifetime — 2,000 BDT</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" required>
+                            <div class="hint">License key will be sent to this email.</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="paymentMethod">Payment Method</label>
+                            <select id="paymentMethod" name="paymentMethod" required>
+                                <option value="">Select one...</option>
+                        <option value="bkash">bKash</option>
+                        <option value="nagad">Nagad</option>
+                        <option value="rocket">Rocket</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="trxid">Transaction ID (TrxID)</label>
+                            <input type="text" id="trxid" name="trxid" placeholder="e.g. TR1234ABCD" required>
+                            <div class="hint">Enter the TrxID from your bKash/Nagad SMS after sending payment.</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="senderNumber">Sender Number</label>
+                            <input type="text" id="senderNumber" name="senderNumber" placeholder="01XXXXXXXXX" required>
+                            <div class="hint">The mobile number you sent payment from.</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="notes">Additional Notes (optional)</label>
+                            <textarea id="notes" name="notes" rows="3"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn-submit" id="submitBtn">Submit Payment Info</button>
+                    </form>
+                    <div class="form-footer">
+                        <p>Questions? <a href="index.html#pricing">Back to pricing</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="progress">
+        <span id="progress-value"><i class='bx bxs-chevrons-up'></i></span>
+    </div>
+
+    <footer>
+        <div class="container footer-inner">
+            <p>&copy; 2026 AKSA DIGITAL POINT. All rights reserved.</p>
+            <p class="small-text">Developed by <a href="https://plabon02.github.io/Apnan-Ahmed" target="_blank" rel="noopener" style="color:#e94560;text-decoration:none;">Apnan Ahmed (Plabon)</a></p>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <script>
+        (function() {
+            var icon = document.querySelector('.menu-icon');
+            var nav = document.querySelector('.navlist');
+            if (icon && nav) {
+                icon.addEventListener('click', function() {
+                    nav.classList.toggle('active');
+                    icon.classList.toggle('active');
+                });
+            }
+        })();
+
+        // Back to top
+        (function() {
+            var progress = document.getElementById('progress');
+            if (!progress) return;
+            window.addEventListener('scroll', function() {
+                progress.style.display = window.scrollY > 200 ? 'grid' : 'none';
+            });
+            progress.addEventListener('click', function() {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        })();
+
+        (function () {
+            function showToast(message, type) {
+                type = type || 'info';
+                var container = document.getElementById('toast-container');
+                if (!container) {
+                    container = document.createElement('div');
+                    container.id = 'toast-container';
+                    document.body.appendChild(container);
+                }
+                var icons = { success: 'bx bx-check-circle', error: 'bx bx-x-circle', info: 'bx bx-info-circle' };
+                var toast = document.createElement('div');
+                toast.className = 'toast toast-' + type;
+                toast.innerHTML = '<span class="toast-icon"><i class="' + (icons[type] || icons.info) + '"></i></span>' + message;
+                container.appendChild(toast);
+                setTimeout(function () { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 4000);
+            }
+
+            var params = new URLSearchParams(window.location.search);
+            var product = params.get('product');
+            if (product) {
+                var selP = document.getElementById('product');
+                if (selP) selP.value = product;
+            }
+            var plan = params.get('plan');
+            if (plan) {
+                var sel = document.getElementById('plan');
+                if (sel) sel.value = plan;
+            }
+
+            var form = document.getElementById('purchaseForm');
+            if (!form) return;
+            var submitBtn = document.getElementById('submitBtn');
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                if (!form.checkValidity()) { form.reportValidity(); return; }
+
+                submitBtn.disabled = true;
+                submitBtn.classList.add('loading');
+
+                var productVal = document.getElementById('product').value;
+                var planVal = document.getElementById('plan').value;
+                var trxVal = document.getElementById('trxid').value.trim();
+                var senderVal = document.getElementById('senderNumber').value.trim();
+                var methodVal = document.getElementById('paymentMethod').value;
+
+                var planLabels = { '6mo':'6mo-300', '12mo':'12mo-500', '24mo':'24mo-900', 'lifetime':'Lifetime-2000' };
+                var subjectLine = '[PURCHASE] ' + productVal.toUpperCase() + ' - ' + (planLabels[planVal]||planVal)
+                    + ' BDT - ' + senderVal + ' (' + trxVal + ')';
+
+                var data = {
+                    _subject: subjectLine,
+                    name: document.getElementById('name').value.trim(),
+                    email: document.getElementById('email').value.trim(),
+                    product: productVal,
+                    plan: planVal,
+                    paymentMethod: methodVal,
+                    trxid: trxVal,
+                    senderNumber: senderVal,
+                    notes: document.getElementById('notes').value.trim(),
+                };
+
+                try {
+                    var resp = await fetch('https://formsubmit.co/ajax/apnan2010@gmail.com', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    if (!resp.ok) throw new Error('Server error');
+                    showSuccess();
+                } catch (err) {
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('loading');
+                    showToast('Something went wrong. Please try again or email us at apnan2010@gmail.com', 'error');
+                }
+            });
+
+            function showSuccess() {
+                var container = document.querySelector('.purchase-layout');
+                container.innerHTML =
+                    '<div class="success-card" style="grid-column:1/-1;max-width:600px;margin:0 auto;">' +
+                    '<h3>✓ Payment Info Submitted</h3>' +
+                    '<p>Thank you! Your payment information has been received.<br><br>' +
+                    'We will verify your transaction and send the license key to your email within <strong>24 hours</strong>.<br><br>' +
+                    'If you don\'t receive the email, please check your spam folder or <a href="mailto:apnan2010@gmail.com" style="color:#e94560;">contact us</a>.</p>' +
+                    '<br><a href="index.html" class="btn" style="display:inline-block;margin-top:16px;">Back to Home</a>' +
+                    '</div>';
+            }
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request License Key – AKSA DIGITAL POINT</title>
+    <meta name="description" content="Request a free public license key to activate any AKSA 10X FASTER add-in for Word, Excel, Photoshop or Illustrator.">
+    <meta name="keywords" content="license key, free license, AKSA 10X FASTER, activate add-in, Word, Excel, Photoshop, Illustrator">
+    <meta property="og:title" content="Request License Key – AKSA DIGITAL POINT">
+    <meta property="og:description" content="Request a free public license key for AKSA 10X FASTER add-ins.">
+    <meta property="og:image" content="images/icon.png">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="images/icon.png" type="image/png">
+    <link rel="stylesheet" href="css/style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo"><span class="gradient">AKSA</span> DIGITAL POINT</a>
+        <ul class="navlist">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="index.html#products">Add-ins</a></li>
+            <li><a href="index.html#pricing">Pricing</a></li>
+            <li><a href="purchase.html">Buy License</a></li>
+        </ul>
+        <div class="right-header">
+            <a href="purchase.html" class="btn">Buy License <i class='bx bx-right-arrow-alt'></i></a>
+            <div class="menu-icon">
+                <div class="bar"></div>
+            </div>
+        </div>
+    </header>
+
+    <section class="page-hero">
+        <div class="container">
+            <h3>Get Started</h3>
+            <h1><span class="gradient">Request License Key</span></h1>
+            <p>Fill out the form below to request a free public license key.</p>
+        </div>
+    </section>
+
+    <section class="form-section">
+        <div class="container" id="formContainer">
+            <div class="form-card">
+                <form id="licenseForm">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" required placeholder="Your full name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" required placeholder="your@email.com">
+                        <div class="hint">Your license key will be sent to this address.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="licenseType">License Type</label>
+                        <select id="licenseType" name="licenseType" required>
+                            <option value="">Select license type...</option>
+                            <option value="trial">30-Day Free Trial</option>
+                            <option value="6mo">6 Months</option>
+                            <option value="12mo">12 Months</option>
+                            <option value="lifetime">Lifetime</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="product">Add-in</label>
+                        <select id="product" name="product" required>
+                            <option value="">Select add-in...</option>
+                            <option value="word">AKSA 10X FASTER — Word</option>
+                            <option value="excel">AKSA 10X FASTER — Excel</option>
+                            <option value="photoshop">AKSA 10X FASTER — Photoshop</option>
+                            <option value="illustrator">AKSA 10X FASTER — Illustrator</option>
+                            <option value="all">All of the above</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="purpose">Purpose of Use</label>
+                        <select id="purpose" name="purpose" required>
+                            <option value="">Select one...</option>
+                            <option value="personal">Personal / Student</option>
+                            <option value="legal">Legal Professional</option>
+                            <option value="business">Small Business</option>
+                            <option value="education">Educational Institution</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="officeVersion">Software Version</label>
+                        <select id="officeVersion" name="officeVersion">
+                            <option value="">Select one...</option>
+                            <option value="2021">2021 / 2022</option>
+                            <option value="2024">2024 / 2025</option>
+                            <option value="365">Microsoft 365 / Creative Cloud</option>
+                            <option value="older">Older version</option>
+                            <option value="other">Not sure</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notes">Additional Notes (optional)</label>
+                        <textarea id="notes" name="notes" placeholder="Any comments or special requests..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="agree" name="agree" required>
+                            <label for="agree">I agree that this license key is for personal, non-commercial use unless otherwise authorized.</label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="submitBtn">Request License Key</button>
+                </form>
+                <div class="form-footer">
+                    <p>Have questions? <a href="mailto:apnan2010@gmail.com">Contact us</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="progress">
+        <span id="progress-value"><i class='bx bxs-chevrons-up'></i></span>
+    </div>
+
+    <footer>
+        <div class="container footer-inner">
+            <p>&copy; 2026 AKSA DIGITAL POINT. All rights reserved.</p>
+            <p class="small-text">Developed by <a href="https://plabon02.github.io/Apnan-Ahmed" target="_blank" rel="noopener" style="color:#e94560;text-decoration:none;">Apnan Ahmed (Plabon)</a></p>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <script>
+        (function() {
+            var icon = document.querySelector('.menu-icon');
+            var nav = document.querySelector('.navlist');
+            if (icon && nav) {
+                icon.addEventListener('click', function() {
+                    nav.classList.toggle('active');
+                    icon.classList.toggle('active');
+                });
+            }
+        })();
+
+        // Back to top
+        (function() {
+            var progress = document.getElementById('progress');
+            if (!progress) return;
+            window.addEventListener('scroll', function() {
+                progress.style.display = window.scrollY > 200 ? 'grid' : 'none';
+            });
+            progress.addEventListener('click', function() {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        })();
+    </script>
+    <script src="js/script.js"></script>
+</body>
+</html>

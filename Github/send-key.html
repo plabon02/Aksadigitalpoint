@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send License Key – Admin</title>
+    <link rel="icon" href="images/icon.png" type="image/png">
+    <link rel="stylesheet" href="css/style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+
+<div class="glow-orb glow-orb--1"></div>
+<div class="glow-orb glow-orb--2"></div>
+
+<header>
+    <a href="index.html" class="logo">AKSA DIGITAL POINT</a>
+    <ul class="navlist">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="request-key.html">Requests</a></li>
+    </ul>
+    <div class="right-header">
+        <a href="index.html" class="btn">Back to Home <i class='bx bx-right-arrow-alt'></i></a>
+    </div>
+</header>
+
+<section class="page-hero">
+    <div class="container">
+        <h3>Admin Panel</h3>
+        <h1>Send <span class="gradient">License Key</span></h1>
+        <p>Fill in the details and send a license key automatically to the recipient.</p>
+    </div>
+</section>
+
+<section class="form-section">
+    <div class="container" id="formContainer">
+        <div class="form-card">
+            <form id="sendKeyForm">
+                <div class="form-group">
+                    <label for="toEmail">Recipient Email</label>
+                    <input type="email" id="toEmail" name="toEmail" required placeholder="user@example.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="toName">Recipient Name</label>
+                    <input type="text" id="toName" name="toName" required placeholder="Full name">
+                </div>
+
+                <div class="form-group">
+                    <label for="licenseKey">License Key</label>
+                    <input type="text" id="licenseKey" name="licenseKey" required placeholder="XXXXX-XXXXX-XXXXX-XXXXX-XXXXX" style="text-transform:uppercase;font-family:monospace;letter-spacing:1px;">
+                    <div class="hint">Enter the license key to send.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="licenseType">License Type</label>
+                    <select id="licenseType" name="licenseType" required>
+                        <option value="30-Day Free Trial">30-Day Free Trial</option>
+                        <option value="6 Months">6 Months</option>
+                        <option value="12 Months">12 Months</option>
+                        <option value="Lifetime">Lifetime</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-submit" id="submitBtn">
+                    <i class='bx bx-send'></i> Send License Key
+                </button>
+            </form>
+            <div class="form-footer" id="mailtoFallback" style="display:none;">
+                <p>Auto-send not available? <a href="#" id="mailtoLink">Open in Email Client</a> (then press Send)</p>
+            </div>
+            <div class="form-footer" style="margin-top:12px;">
+                <a href="#" id="settingsToggle" style="font-size:13px;color:var(--font-muted);">⚙ EmailJS Settings</a>
+            </div>
+            <div id="emailjsSettings" style="display:none;margin-top:16px;padding:16px;border:1px solid var(--glass-border);border-radius:8px;background:var(--glass-bg);">
+                <p style="font-size:13px;color:var(--font-muted);margin-bottom:12px;">Enter your EmailJS credentials for auto-send. Get these from <a href="https://www.emailjs.com" target="_blank" style="color:var(--primary);">emailjs.com</a> (free, 200 emails/month).</p>
+                <div class="form-group" style="margin-bottom:12px;">
+                    <label style="font-size:13px;">Public Key</label>
+                    <input type="text" id="emailjsKey" placeholder="Your EmailJS public key">
+                </div>
+                <div class="form-group" style="margin-bottom:12px;">
+                    <label style="font-size:13px;">Service ID</label>
+                    <input type="text" id="emailjsService" placeholder="e.g. service_xxx">
+                </div>
+                <div class="form-group" style="margin-bottom:12px;">
+                    <label style="font-size:13px;">Template ID</label>
+                    <input type="text" id="emailjsTemplate" placeholder="e.g. template_xxx">
+                </div>
+                <button class="btn" id="saveEmailjsBtn" style="background:var(--gradient-primary);color:#fff;border:none;padding:8px 20px;border-radius:6px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;">Save Settings</button>
+                <span id="emailjsStatus" style="margin-left:12px;font-size:13px;color:var(--secondary);"></span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id="progress">
+    <span id="progress-value"><i class='bx bxs-chevrons-up'></i></span>
+</div>
+
+<footer>
+    <div class="container">
+        <p>&copy; 2026 AKSA DIGITAL POINT. Admin panel.</p>
+    </div>
+</footer>
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+(function() {
+    var form = document.getElementById('sendKeyForm');
+    var submitBtn = document.getElementById('submitBtn');
+    var mailtoFallback = document.getElementById('mailtoFallback');
+    var mailtoLink = document.getElementById('mailtoLink');
+    if (!form) return;
+
+    // EmailJS settings toggle
+    var settingsToggle = document.getElementById('settingsToggle');
+    var emailjsSettings = document.getElementById('emailjsSettings');
+    var emailjsKeyInput = document.getElementById('emailjsKey');
+    var emailjsServiceInput = document.getElementById('emailjsService');
+    var emailjsTemplateInput = document.getElementById('emailjsTemplate');
+    var saveBtn = document.getElementById('saveEmailjsBtn');
+    var emailjsStatus = document.getElementById('emailjsStatus');
+
+    if (settingsToggle) {
+        settingsToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            emailjsSettings.style.display = emailjsSettings.style.display === 'none' ? 'block' : 'none';
+            // Fill saved values
+            emailjsKeyInput.value = localStorage.getItem('emailjs_key') || '';
+            emailjsServiceInput.value = localStorage.getItem('emailjs_service') || '';
+            emailjsTemplateInput.value = localStorage.getItem('emailjs_template') || '';
+        });
+    }
+
+    if (saveBtn) {
+        saveBtn.addEventListener('click', function() {
+            var k = emailjsKeyInput.value.trim();
+            var s = emailjsServiceInput.value.trim();
+            var t = emailjsTemplateInput.value.trim();
+            if (k && s && t) {
+                localStorage.setItem('emailjs_key', k);
+                localStorage.setItem('emailjs_service', s);
+                localStorage.setItem('emailjs_template', t);
+                emailjsStatus.textContent = 'Saved! Refresh page to activate.';
+                emailjsStatus.style.color = '#10b981';
+            } else {
+                emailjsStatus.textContent = 'Fill all 3 fields.';
+                emailjsStatus.style.color = '#ef4444';
+            }
+        });
+    }
+
+    // Try to init EmailJS
+    var emailJsReady = false;
+    var emailJsKey = localStorage.getItem('emailjs_key');
+    var emailJsService = localStorage.getItem('emailjs_service');
+    var emailJsTemplate = localStorage.getItem('emailjs_template');
+
+    if (emailJsKey && emailJsService && emailJsTemplate) {
+        try {
+            emailjs.init(emailJsKey);
+            emailJsReady = true;
+        } catch(e) {}
+    }
+
+    if (!emailJsReady) {
+        mailtoFallback.style.display = 'block';
+        submitBtn.innerHTML = '<i class="bx bx-envelope"></i> Prepare Email';
+    }
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (!form.checkValidity()) { form.reportValidity(); return; }
+
+        var toEmail = document.getElementById('toEmail').value.trim();
+        var toName = document.getElementById('toName').value.trim();
+        var licenseKey = document.getElementById('licenseKey').value.trim().toUpperCase();
+        var licenseType = document.getElementById('licenseType').value;
+
+        // Build email body
+        var subject = 'Your AKSA 10X FASTER License Key';
+        var body = 'Dear ' + toName + ',\n\n'
+            + 'Your ' + licenseType + ' license key for AKSA 10X FASTER is ready:\n\n'
+            + licenseKey + '\n\n'
+            + 'How to activate:\n'
+            + '1. Install AKSA 10X FASTER from the website\n'
+            + '2. Open any document and go to the AKSA tab\n'
+            + '3. Click the Key icon (License Activation)\n'
+            + '4. Enter your license key and click Register\n\n'
+            + 'If you have any questions, reply to this email.\n\n'
+            + 'Best regards,\nApnan Ahmed (Plabon)\nAKSA DIGITAL POINT';
+
+        if (emailJsReady) {
+            // Send via EmailJS
+            submitBtn.disabled = true;
+            submitBtn.classList.add('loading');
+
+            emailjs.send(emailJsService, emailJsTemplate, {
+                to_email: toEmail,
+                to_name: toName,
+                license_key: licenseKey,
+                license_type: licenseType,
+                message: body,
+                subject: subject
+            }).then(function() {
+                showSuccess();
+            }, function(err) {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('loading');
+                showMailtoFallback(toEmail, subject, body);
+                showToast('EmailJS failed. Use the fallback link below.', 'error');
+            });
+        } else {
+            showMailtoFallback(toEmail, subject, body);
+        }
+    });
+
+    function showMailtoFallback(to, sub, body) {
+        mailtoLink.href = 'mailto:' + encodeURIComponent(to)
+            + '?subject=' + encodeURIComponent(sub)
+            + '&body=' + encodeURIComponent(body);
+        mailtoFallback.style.display = 'block';
+        submitBtn.innerHTML = '<i class="bx bx-envelope"></i> Open in Email Client';
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('loading');
+    }
+
+    function showSuccess() {
+        var container = document.getElementById('formContainer');
+        container.innerHTML =
+            '<div class="success-card">'
+            + '<h3><i class="bx bx-check-circle" style="color:#10b981;"></i> License Key Sent!</h3>'
+            + '<p>The license key has been sent successfully to the recipient.</p>'
+            + '<br><a href="send-key.html" class="btn" style="display:inline-block;background:var(--gradient-primary);color:#fff;padding:12px 32px;border-radius:8px;font-weight:600;">Send Another Key</a>'
+            + '<br><br><a href="index.html" style="color:var(--primary);font-size:14px;">Back to Home</a>'
+            + '</div>';
+    }
+
+    function showToast(msg, type) {
+        type = type || 'info';
+        var container = document.getElementById('toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toast-container';
+            document.body.appendChild(container);
+        }
+        var icons = { success: 'bx bx-check-circle', error: 'bx bx-x-circle', info: 'bx bx-info-circle' };
+        var toast = document.createElement('div');
+        toast.className = 'toast toast-' + type;
+        toast.innerHTML = '<span class="toast-icon"><i class="' + (icons[type] || icons.info) + '"></i></span>' + msg;
+        container.appendChild(toast);
+        setTimeout(function() { if(toast.parentNode) toast.parentNode.removeChild(toast); }, 4000);
+    }
+})();
+
+// Back to top
+(function(){
+    var p = document.getElementById('progress');
+    if(!p) return;
+    window.addEventListener('scroll', function(){ p.style.display = window.scrollY > 200 ? 'grid' : 'none'; });
+    p.addEventListener('click', function(){ window.scrollTo({ top:0, behavior:'smooth' }); });
+})();
+</script>
+</body>
+</html>

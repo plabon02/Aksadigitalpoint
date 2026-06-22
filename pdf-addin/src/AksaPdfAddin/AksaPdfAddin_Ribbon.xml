@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<customUI xmlns="http://schemas.microsoft.com/office/2006/01/customui">
+  <ribbon>
+    <tabs>
+      <tab id="tabPdfAksa" label="AKSA PDF Tools" insertAfterMso="TabHome">
+
+        <!-- ===== CONVERT GROUP ===== -->
+        <group id="grpConvert" label="Convert">
+          <button id="btnWordToPdf" size="large" label="Word→PDF" onAction="OnWordToPdf" tag="word2pdf" getImage="GetImage" screentip="Word to PDF" supertip="Save current document as PDF" />
+          <button id="btnPdfToWord" size="large" label="PDF→Word" onAction="OnPdfToWord" tag="pdf2word" getImage="GetImage" screentip="PDF to Word" supertip="Open a PDF file and convert it to Word document" />
+          <menu id="mnuBatchConvert" size="large" label="Batch" tag="batch" getImage="GetImage" screentip="Batch Convert" supertip="Convert multiple files at once">
+            <button id="btnBatchWordToPdf" label="Word Files → PDF" tag="batch_w2p" getImage="GetImage" onAction="OnBatchWordToPdf" />
+            <button id="btnBatchPdfToWord" label="PDF Files → Word" tag="batch_p2w" getImage="GetImage" onAction="OnBatchPdfToWord" />
+          </menu>
+        </group>
+
+        <!-- ===== MERGE / SPLIT GROUP ===== -->
+        <group id="grpMergeSplit" label="Merge &amp; Split">
+          <button id="btnMergePdf" size="large" label="Merge" onAction="OnMergePdf" tag="merge_pdf" getImage="GetImage" screentip="Merge PDF" supertip="Combine multiple PDF files into one" />
+          <button id="btnSplitPdf" size="large" label="Split" onAction="OnSplitPdf" tag="split_pdf" getImage="GetImage" screentip="Split PDF" supertip="Split a PDF file into separate pages" />
+          <button id="btnExtractPages" size="large" label="Extract" onAction="OnExtractPages" tag="extract_pdf" getImage="GetImage" screentip="Extract Pages" supertip="Extract specific pages from a PDF" />
+        </group>
+
+        <!-- ===== PROTECT GROUP ===== -->
+        <group id="grpProtect" label="Protect">
+          <button id="btnProtectPdf" size="large" label="Protect" onAction="OnProtectPdf" tag="protect_pdf" getImage="GetImage" screentip="Protect PDF" supertip="Add password protection to a PDF file" />
+          <button id="btnUnlockPdf" size="large" label="Unlock" onAction="OnUnlockPdf" tag="unlock_pdf" getImage="GetImage" screentip="Unlock PDF" supertip="Remove password protection from a PDF" />
+        </group>
+
+        <!-- ===== INFO GROUP ===== -->
+        <group id="grpInfo" label="Info">
+          <button id="btnPdfInfo" size="large" label="Info" onAction="OnPdfInfo" tag="pdf_info" getImage="GetImage" screentip="PDF Info" supertip="Show PDF file properties (pages, size, encryption)" />
+          <button id="btnAboutPdf" size="large" label="About" onAction="OnAbout" tag="about_pdf" getImage="GetImage" screentip="About" supertip="About AKSA PDF Tools" />
+        </group>
+
+      </tab>
+    </tabs>
+  </ribbon>
+</customUI>
