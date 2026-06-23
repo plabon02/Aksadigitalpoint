@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online PDF Tools – AKSA DIGITAL POINT</title>
+    <meta name="description" content="Free online PDF tools: merge, split, extract pages, rotate, view PDF info. All in your browser, no upload needed.">
+    <link rel="icon" href="images/icon.png" type="image/png">
+    <link rel="stylesheet" href="css/style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <style>
+        .ptool { padding: 96px 0; }
+        .ptool h2.section-title { margin-bottom: 8px; }
+        .ptool-desc { text-align: center; color: var(--font-color); max-width: 600px; margin: 0 auto 40px; font-size: 14px; line-height: 1.6; }
+
+        .ptool-tabs { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; margin-bottom: 40px; }
+        .ptool-tab {
+            padding: 10px 22px; border-radius: var(--radius-sm); border: 1px solid var(--card-border);
+            background: var(--white); cursor: pointer; font-size: 13px; font-weight: 500; font-family: inherit;
+            color: var(--font-light); transition: 0.3s;
+        }
+        .ptool-tab:hover { border-color: var(--main-color); color: var(--main-color); }
+        .ptool-tab.active { background: var(--gradient-primary); color: var(--white); border-color: transparent; }
+
+        .ptool-panel { display: none; max-width: 720px; margin: 0 auto; }
+        .ptool-panel.active { display: block; }
+
+        .ptool-box {
+            background: var(--white); border-radius: var(--radius); padding: 32px;
+            border: 1px solid var(--card-border); box-shadow: var(--box-shadow);
+        }
+        .ptool-box h3 { font-size: 18px; margin-bottom: 6px; }
+        .ptool-box p.desc { color: var(--font-color); font-size: 13px; margin-bottom: 20px; }
+
+        .drop-zone {
+            border: 2px dashed var(--card-border); border-radius: var(--radius-sm);
+            padding: 40px 20px; text-align: center; cursor: pointer; transition: 0.3s; margin-bottom: 16px;
+        }
+        .drop-zone:hover, .drop-zone.dragover { border-color: var(--main-color); background: rgba(230,0,109,0.03); }
+        .drop-zone i { font-size: 40px; color: var(--main-color); margin-bottom: 8px; }
+        .drop-zone p { color: var(--font-color); font-size: 13px; }
+        .drop-zone input { display: none; }
+
+        .file-list { margin: 12px 0; }
+        .file-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 8px 14px; background: var(--bg-color); border-radius: 6px; margin-bottom: 6px; font-size: 13px;
+        }
+        .file-item .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .file-item .size { color: var(--font-color); margin: 0 12px; white-space: nowrap; }
+        .file-item .remove { cursor: pointer; color: #e74c3c; font-size: 18px; line-height: 1; }
+
+        .ptool-input { width: 100%; padding: 10px 14px; border: 1px solid var(--card-border); border-radius: 6px; font-size: 13px; font-family: inherit; outline: none; transition: 0.3s; margin-bottom: 16px; }
+        .ptool-input:focus { border-color: var(--main-color); }
+
+        .ptool-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+        .ptool-actions button, .ptool-actions a {
+            padding: 10px 24px; border-radius: 6px; font-weight: 600; font-size: 13px;
+            border: none; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 6px; transition: 0.3s; text-decoration: none;
+        }
+        .btn-process { background: var(--gradient-primary); color: var(--white); }
+        .btn-process:hover { box-shadow: var(--hover-shadow); transform: translateY(-1px); }
+        .btn-process:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn-reset { background: var(--bg-color); color: var(--font-light); border: 1px solid var(--card-border); }
+        .btn-reset:hover { border-color: var(--main-color); color: var(--main-color); }
+
+        .ptool-status { margin-top: 16px; padding: 12px 16px; border-radius: 6px; font-size: 13px; display: none; }
+        .ptool-status.show { display: block; }
+        .ptool-status.info { background: #e8f4fd; color: #1a73e8; }
+        .ptool-status.success { background: #e6f9ed; color: #0d8a3e; }
+        .ptool-status.error { background: #fde8e8; color: #d32f2f; }
+
+        .page-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; margin: 16px 0; }
+        .page-preview { border: 2px solid var(--card-border); border-radius: 6px; overflow: hidden; cursor: pointer; transition: 0.3s; text-align: center; padding-bottom: 6px; }
+        .page-preview:hover { border-color: var(--main-color); }
+        .page-preview.selected { border-color: var(--main-color); background: rgba(230,0,109,0.05); }
+        .page-preview canvas { width: 100%; display: block; }
+        .page-preview span { font-size: 11px; color: var(--font-color); }
+
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .info-item { padding: 12px 16px; background: var(--bg-color); border-radius: 6px; }
+        .info-item .label { font-size: 11px; color: var(--font-color); text-transform: uppercase; letter-spacing: 0.5px; }
+        .info-item .value { font-size: 16px; font-weight: 600; margin-top: 2px; }
+
+        .vid-wrap video { width: 100%; border-radius: 6px; }
+
+        @media (max-width: 600px) {
+            .ptool-tabs { gap: 4px; }
+            .ptool-tab { padding: 8px 14px; font-size: 12px; }
+            .info-grid { grid-template-columns: 1fr; }
+            .ptool-box { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="index.html" class="logo">AKSA DIGITAL POINT</a>
+    <ul class="navlist">
+        <li><a href="index.html#features">Features</a></li>
+        <li><a href="index.html#products">Add-ins</a></li>
+        <li><a href="index.html#pricing">Pricing</a></li>
+        <li><a href="request-key.html">Get License Key</a></li>
+    </ul>
+    <div class="right-header">
+        <a href="purchase.html" class="btn">Buy License <i class='bx bx-right-arrow-alt'></i></a>
+        <div class="menu-icon">
+            <div class="bar"></div>
+        </div>
+    </div>
+</header>
+
+<section class="ptool" id="pdfTools">
+    <div class="container">
+        <h2 class="section-title">Online <span class="gradient">PDF Tools</span></h2>
+        <p class="ptool-desc">Merge, split, extract, rotate — all in your browser. Nothing is uploaded to any server.</p>
+
+        <div class="ptool-tabs">
+            <button class="ptool-tab active" data-tab="merge"><i class='bx bx-layer'></i> Merge</button>
+            <button class="ptool-tab" data-tab="split"><i class='bx bx-cut'></i> Split</button>
+            <button class="ptool-tab" data-tab="extract"><i class='bx bx-copy-alt'></i> Extract</button>
+            <button class="ptool-tab" data-tab="rotate"><i class='bx bx-rotate-right'></i> Rotate</button>
+            <button class="ptool-tab" data-tab="info"><i class='bx bx-info-circle'></i> Info</button>
+            <button class="ptool-tab" data-tab="view"><i class='bx bx-show'></i> View</button>
+        </div>
+
+        <!-- MERGE -->
+        <div class="ptool-panel active" id="panel-merge">
+            <div class="ptool-box">
+                <h3>Merge PDF</h3>
+                <p class="desc">Combine multiple PDF files into one document.</p>
+                <div class="drop-zone" id="mergeDrop">
+                    <i class='bx bx-cloud-upload'></i>
+                    <p>Drop PDF files here or click to select</p>
+                </div>
+                <div class="file-list" id="mergeFiles"></div>
+                <div class="ptool-actions">
+                    <button class="btn-process" id="mergeBtn" disabled><i class='bx bx-layer'></i> Merge PDFs</button>
+                    <button class="btn-reset" id="mergeReset"><i class='bx bx-reset'></i> Clear</button>
+                </div>
+                <div class="ptool-status" id="mergeStatus"></div>
+            </div>
+        </div>
+
+        <!-- SPLIT -->
+        <div class="ptool-panel" id="panel-split">
+            <div class="ptool-box">
+                <h3>Split PDF</h3>
+                <p class="desc">Split a PDF into separate pages.</p>
+                <div class="drop-zone" id="splitDrop">
+                    <i class='bx bx-cloud-upload'></i>
+                    <p>Drop a PDF file here or click to select</p>
+                </div>
+                <div class="file-list" id="splitFiles"></div>
+                <div class="ptool-actions">
+                    <button class="btn-process" id="splitBtn" disabled><i class='bx bx-cut'></i> Split Pages</button>
+                    <button class="btn-reset" id="splitReset"><i class='bx bx-reset'></i> Clear</button>
+                </div>
+                <div class="ptool-status" id="splitStatus"></div>
+            </div>
+        </div>
+
+        <!-- EXTRACT -->
+        <div class="ptool-panel" id="panel-extract">
+            <div class="ptool-box">
+                <h3>Extract Pages</h3>
+                <p class="desc">Select specific pages to extract into a new PDF.</p>
+                <div class="drop-zone" id="extractDrop">
+                    <i class='bx bx-cloud-upload'></i>
+                    <p>Drop a PDF file here or click to select</p>
+                </div>
+                <div class="file-list" id="extractFiles"></div>
+                <div class="page-preview-grid" id="extractPreviews"></div>
+                <div class="ptool-actions">
+                    <button class="btn-process" id="extractBtn" disabled><i class='bx bx-copy-alt'></i> Extract Selected</button>
+                    <button class="btn-reset" id="extractReset"><i class='bx bx-reset'></i> Clear</button>
+                </div>
+                <div class="ptool-status" id="extractStatus"></div>
+            </div>
+        </div>
+
+        <!-- ROTATE -->
+        <div class="ptool-panel" id="panel-rotate">
+            <div class="ptool-box">
+                <h3>Rotate PDF</h3>
+                <p class="desc">Rotate all pages in a PDF file.</p>
+                <div class="drop-zone" id="rotateDrop">
+                    <i class='bx bx-cloud-upload'></i>
+                    <p>Drop a PDF file here or click to select</p>
+                </div>
+                <div class="file-list" id="rotateFiles"></div>
+                <div style="margin-bottom:12px;">
+                    <label style="font-size:13px;font-weight:500;display:block;margin-bottom:6px;">Rotate by:</label>
+                    <select id="rotateAngle" class="ptool-input" style="max-width:200px;">
+                        <option value="90">90° Clockwise</option>
+                        <option value="-90">90° Counter-Clockwise</option>
+                        <option value="180">180°</option>
+                    </select>
+                </div>
+                <div class="ptool-actions">
+                    <button class="btn-process" id="rotateBtn" disabled><i class='bx bx-rotate-right'></i> Rotate PDF</button>
+                    <button class="btn-reset" id="rotateReset"><i class='bx bx-reset'></i> Clear</button>
+                </div>
+                <div class="ptool-status" id="rotateStatus"></div>
+            </div>
+        </div>
+
+        <!-- INFO -->
+        <div class="ptool-panel" id="panel-info">
+            <div class="ptool-box">
+                <h3>PDF Info</h3>
+                <p class="desc">View metadata and properties of a PDF file.</p>
+                <div class="drop-zone" id="infoDrop">
+                    <i class='bx bx-cloud-upload'></i>
+                    <p>Drop a PDF file here or click to select</p>
+                </div>
+                <div class="file-list" id="infoFiles"></div>
+                <div class="info-grid" id="infoData" style="display:none;"></div>
+                <div class="ptool-status" id="infoStatus"></div>
+            </div>
+        </div>
+
+        <!-- VIEW -->
+        <div class="ptool-panel" id="panel-view">
+            <div class="ptool-box">
+                <h3>PDF Viewer</h3>
+                <p class="desc">Preview PDF pages in your browser.</p>
+                <div class="drop-zone" id="viewDrop">
+                    <i class='bx bx-cloud-upload'></i>
+                    <p>Drop a PDF file here or click to select</p>
+                </div>
+                <div class="file-list" id="viewFiles"></div>
+                <div id="viewContainer" style="display:none;">
+                    <div class="ptool-actions" style="justify-content:center;margin-bottom:16px;">
+                        <button class="btn-reset" id="viewPrev"><i class='bx bx-chevron-left'></i> Prev</button>
+                        <span id="viewPageInfo" style="display:flex;align-items:center;font-size:13px;font-weight:500;padding:0 12px;"></span>
+                        <button class="btn-reset" id="viewNext">Next <i class='bx bx-chevron-right'></i></button>
+                    </div>
+                    <div id="viewCanvasWrap" style="text-align:center;">
+                        <canvas id="viewCanvas" style="max-width:100%;border-radius:6px;box-shadow:0 4px 20px rgba(0,0,0,0.08);"></canvas>
+                    </div>
+                </div>
+                <div class="ptool-status" id="viewStatus"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="container">
+        <p>&copy; 2026 AKSA DIGITAL POINT. All rights reserved.</p>
+        <p class="small-text"><a href="index.html">Back to Home</a></p>
+    </div>
+</footer>
+
+<div id="toast-container"></div>
+
+<script src="js/script.js"></script>
+<script>
+// ========== TOOL TABS ==========
+(function(){
+    var tabs = document.querySelectorAll('.ptool-tab');
+    var panels = document.querySelectorAll('.ptool-panel');
+    tabs.forEach(function(tab){
+        tab.addEventListener('click', function(){
+            tabs.forEach(function(t){ t.classList.remove('active'); });
+            panels.forEach(function(p){ p.classList.remove('active'); });
+            tab.classList.add('active');
+            document.getElementById('panel-' + tab.getAttribute('data-tab')).classList.add('active');
+        });
+    });
+})();
+
+// ========== HELPERS ==========
+function setStatus(el, msg, type) {
+    el.textContent = msg; el.className = 'ptool-status show ' + type;
+}
+function bytes(n) { if(n<1024) return n+' B'; if(n<1048576) return (n/1024).toFixed(1)+' KB'; return (n/1048576).toFixed(1)+' MB'; }
+function readFile(file) { return new Promise(function(r){ var fr=new FileReader(); fr.onload=function(){ r(fr.result); }; fr.readAsArrayBuffer(file); }); }
+function download(bytes, name) { var blob=new Blob([bytes],{type:'application/pdf'}); var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; a.click(); URL.revokeObjectURL(a.href); }
+
+// Drop zone setup
+function setupDrop(zoneId, listId, handler, multi) {
+    var zone=document.getElementById(zoneId);
+    var input=document.createElement('input'); input.type='file'; input.accept='.pdf'; input.multiple=multi;
+    zone.appendChild(input);
+    zone.addEventListener('click', function(){ input.click(); });
+    zone.addEventListener('dragover', function(e){ e.preventDefault(); zone.classList.add('dragover'); });
+    zone.addEventListener('dragleave', function(){ zone.classList.remove('dragover'); });
+    zone.addEventListener('drop', function(e){ e.preventDefault(); zone.classList.remove('dragover'); handler(e.dataTransfer.files); });
+    input.addEventListener('change', function(){ handler(input.files); input.value=''; });
+}
+
+function fileListHtml(files, removable) {
+    var h='';
+    for(var i=0;i<files.length;i++){
+        h+='<div class="file-item"><span class="name">'+files[i].name+'</span><span class="size">'+bytes(files[i].size)+'</span>';
+        if(removable) h+='<span class="remove" data-idx="'+i+'">&times;</span>';
+        h+='</div>';
+    }
+    return h;
+}
+
+// ========== MERGE ==========
+(function(){
+    var files=[];
+    var zone=document.getElementById('mergeDrop');
+    var list=document.getElementById('mergeFiles');
+    var btn=document.getElementById('mergeBtn');
+    var rst=document.getElementById('mergeReset');
+    var st=document.getElementById('mergeStatus');
+
+    setupDrop('mergeDrop','mergeFiles',function(f){ for(var i=0;i<f.length;i++) if(f[i].type==='application/pdf') files.push(f[i]); render(); },true);
+
+    function render(){
+        list.innerHTML=fileListHtml(files,true);
+        btn.disabled=files.length<2;
+        list.querySelectorAll('.remove').forEach(function(el){
+            el.addEventListener('click',function(){ files.splice(parseInt(el.getAttribute('data-idx')),1); render(); });
+        });
+    }
+
+    rst.addEventListener('click',function(){ files=[]; render(); st.className='ptool-status'; });
+
+    btn.addEventListener('click',async function(){
+        if(files.length<2) return;
+        btn.disabled=true; setStatus(st,'Merging PDFs...','info');
+        try{
+            var mergedPdf=await pdfLib.PDFDocument.create();
+            for(var i=0;i<files.length;i++){
+                var buf=await readFile(files[i]);
+                var pdf=await pdfLib.PDFDocument.load(buf);
+                var pages=await mergedPdf.copyPages(pdf,pdf.getPageIndices());
+                pages.forEach(function(p){ mergedPdf.addPage(p); });
+            }
+            var out=await mergedPdf.save();
+            download(out,'merged.pdf');
+            setStatus(st,'Merged '+files.length+' PDFs successfully.','success');
+        }catch(e){ setStatus(st,'Error: '+e.message,'error'); }
+        btn.disabled=false;
+    });
+})();
+
+// ========== SPLIT ==========
+(function(){
+    var files=[];
+    var zone=document.getElementById('splitDrop');
+    var list=document.getElementById('splitFiles');
+    var btn=document.getElementById('splitBtn');
+    var rst=document.getElementById('splitReset');
+    var st=document.getElementById('splitStatus');
+
+    setupDrop('splitDrop','splitFiles',function(f){ if(f.length) files=[f[0]]; render(); },false);
+
+    function render(){
+        list.innerHTML=fileListHtml(files,true);
+        btn.disabled=files.length===0;
+        list.querySelectorAll('.remove').forEach(function(el){
+            el.addEventListener('click',function(){ files=[]; render(); });
+        });
+    }
+
+    rst.addEventListener('click',function(){ files=[]; render(); st.className='ptool-status'; });
+
+    btn.addEventListener('click',async function(){
+        if(!files.length) return;
+        btn.disabled=true; setStatus(st,'Splitting PDF...','info');
+        try{
+            var buf=await readFile(files[0]);
+            var pdf=await pdfLib.PDFDocument.load(buf);
+            var name=files[0].name.replace(/\.pdf$/i,'');
+            for(var i=0;i<pdf.getPageCount();i++){
+                var newPdf=await pdfLib.PDFDocument.create();
+                var [page]=await newPdf.copyPages(pdf,[i]);
+                newPdf.addPage(page);
+                var out=await newPdf.save();
+                download(out,name+'_page'+(i+1)+'.pdf');
+            }
+            setStatus(st,'Split '+pdf.getPageCount()+' pages.','success');
+        }catch(e){ setStatus(st,'Error: '+e.message,'error'); }
+        btn.disabled=false;
+    });
+})();
+
+// ========== EXTRACT ==========
+(function(){
+    var files=[];
+    var selected=[];
+    var zone=document.getElementById('extractDrop');
+    var list=document.getElementById('extractFiles');
+    var previews=document.getElementById('extractPreviews');
+    var btn=document.getElementById('extractBtn');
+    var rst=document.getElementById('extractReset');
+    var st=document.getElementById('extractStatus');
+
+    setupDrop('extractDrop','extractFiles',function(f){ if(f.length){ files=[f[0]]; loadPreviews(); } },false);
+
+    async function loadPreviews(){
+        if(!files.length) return;
+        list.innerHTML=fileListHtml(files,true);
+        list.querySelectorAll('.remove').forEach(function(el){
+            el.addEventListener('click',function(){ files=[]; previews.innerHTML=''; selected=[]; btn.disabled=true; render(); });
+        });
+        previews.innerHTML='<p style="font-size:13px;color:var(--font-color);text-align:center;">Loading previews...</p>';
+        try{
+            var buf=await readFile(files[0]);
+            var pdfDoc=await pdfLib.PDFDocument.load(buf);
+            var count=pdfDoc.getPageCount();
+            selected=[]; for(var i=0;i<count;i++) selected.push(i);
+            previews.innerHTML='<p style="font-size:12px;color:var(--font-color);margin-bottom:12px;">Click pages to select/deselect. <strong>'+count+'</strong> page(s).</p><div class="page-preview-grid" id="extractGrid"></div>';
+            var grid=document.getElementById('extractGrid');
+            for(var i=0;i<count;i++){
+                var div=document.createElement('div');
+                div.className='page-preview selected';
+                div.innerHTML='<span>Page '+(i+1)+'</span>';
+                div.dataset.idx=i;
+                div.addEventListener('click',function(){
+                    var idx=parseInt(this.dataset.idx);
+                    this.classList.toggle('selected');
+                    var pos=selected.indexOf(idx);
+                    if(pos>-1) selected.splice(pos,1); else selected.push(idx);
+                    selected.sort(function(a,b){return a-b;});
+                });
+                grid.appendChild(div);
+            }
+            btn.disabled=false;
+        }catch(e){ previews.innerHTML='<p style="color:#d32f2f;font-size:13px;">Error loading PDF: '+e.message+'</p>'; }
+    }
+
+    function render(){
+        if(!files.length){ list.innerHTML=''; previews.innerHTML=''; selected=[]; }
+    }
+
+    rst.addEventListener('click',function(){ files=[]; previews.innerHTML=''; selected=[]; btn.disabled=true; render(); st.className='ptool-status'; });
+
+    btn.addEventListener('click',async function(){
+        if(!files.length||!selected.length) return;
+        btn.disabled=true; setStatus(st,'Extracting pages...','info');
+        try{
+            var buf=await readFile(files[0]);
+            var pdf=await pdfLib.PDFDocument.load(buf);
+            var newPdf=await pdfLib.PDFDocument.create();
+            var pages=await newPdf.copyPages(pdf,selected);
+            pages.forEach(function(p){ newPdf.addPage(p); });
+            var out=await newPdf.save();
+            download(out, files[0].name.replace(/\.pdf$/i,'')+'_extracted.pdf');
+            setStatus(st,'Extracted '+selected.length+' page(s).','success');
+        }catch(e){ setStatus(st,'Error: '+e.message,'error'); }
+        btn.disabled=false;
+    });
+})();
+
+// ========== ROTATE ==========
+(function(){
+    var files=[];
+    var zone=document.getElementById('rotateDrop');
+    var list=document.getElementById('rotateFiles');
+    var btn=document.getElementById('rotateBtn');
+    var rst=document.getElementById('rotateReset');
+    var angle=document.getElementById('rotateAngle');
+    var st=document.getElementById('rotateStatus');
+
+    setupDrop('rotateDrop','rotateFiles',function(f){ if(f.length) files=[f[0]]; render(); },false);
+
+    function render(){
+        list.innerHTML=fileListHtml(files,true);
+        btn.disabled=files.length===0;
+        list.querySelectorAll('.remove').forEach(function(el){
+            el.addEventListener('click',function(){ files=[]; render(); });
+        });
+    }
+
+    rst.addEventListener('click',function(){ files=[]; render(); st.className='ptool-status'; });
+
+    btn.addEventListener('click',async function(){
+        if(!files.length) return;
+        btn.disabled=true; setStatus(st,'Rotating PDF...','info');
+        try{
+            var buf=await readFile(files[0]);
+            var pdf=await pdfLib.PDFDocument.load(buf);
+            var deg=parseInt(angle.value);
+            var idxs=pdf.getPageIndices();
+            for(var i=0;i<idxs.length;i++){
+                var page=pdf.getPage(idxs[i]);
+                var r=page.getRotation().angle;
+                page.setRotation(pdfLib.degrees(r+deg));
+            }
+            var out=await pdf.save();
+            download(out, files[0].name.replace(/\.pdf$/i,'')+'_rotated.pdf');
+            setStatus(st,'Rotated all pages by '+deg+'\u00b0.','success');
+        }catch(e){ setStatus(st,'Error: '+e.message,'error'); }
+        btn.disabled=false;
+    });
+})();
+
+// ========== INFO ==========
+(function(){
+    var files=[];
+    var zone=document.getElementById('infoDrop');
+    var list=document.getElementById('infoFiles');
+    var data=document.getElementById('infoData');
+    var st=document.getElementById('infoStatus');
+
+    setupDrop('infoDrop','infoFiles',function(f){ if(f.length) files=[f[0]]; render(); },false);
+
+    function render(){
+        list.innerHTML=fileListHtml(files,false);
+        if(files.length){ showInfo(); } else { data.style.display='none'; st.className='ptool-status'; }
+    }
+
+    async function showInfo(){
+        setStatus(st,'Reading PDF info...','info');
+        try{
+            var buf=await readFile(files[0]);
+            var pdf=await pdfLib.PDFDocument.load(buf,{ignoreEncryption:true});
+            var pages=pdf.getPageCount();
+            var f=files[0];
+            data.style.display='grid';
+            data.innerHTML=
+                '<div class="info-item"><div class="label">File Name</div><div class="value">'+f.name+'</div></div>'+
+                '<div class="info-item"><div class="label">File Size</div><div class="value">'+bytes(f.size)+'</div></div>'+
+                '<div class="info-item"><div class="label">Pages</div><div class="value">'+pages+'</div></div>'+
+                '<div class="info-item"><div class="label">Encrypted</div><div class="value">'+(pdf.isEncrypted?'Yes':'No')+'</div></div>'+
+                '<div class="info-item"><div class="label">Author</div><div class="value">'+(pdf.getAuthor()||'N/A')+'</div></div>'+
+                '<div class="info-item"><div class="label">Title</div><div class="value">'+(pdf.getTitle()||'N/A')+'</div></div>';
+            st.className='ptool-status';
+        }catch(e){ setStatus(st,'Error: '+e.message,'error'); }
+    }
+})();
+
+// ========== VIEW ==========
+(function(){
+    var files=[];
+    var pdfDoc=null;
+    var curPage=0;
+    var zone=document.getElementById('viewDrop');
+    var list=document.getElementById('viewFiles');
+    var container=document.getElementById('viewContainer');
+    var canvas=document.getElementById('viewCanvas');
+    var ctx=canvas.getContext('2d');
+    var pageInfo=document.getElementById('viewPageInfo');
+    var prevBtn=document.getElementById('viewPrev');
+    var nextBtn=document.getElementById('viewNext');
+    var st=document.getElementById('viewStatus');
+
+    setupDrop('viewDrop','viewFiles',function(f){ if(f.length){ files=[f[0]]; loadPdf(); } },false);
+
+    async function loadPdf(){
+        list.innerHTML=fileListHtml(files,false);
+        setStatus(st,'Loading PDF...','info');
+        try{
+            var buf=await readFile(files[0]);
+            pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+            var loadingTask=pdfjsLib.getDocument({data:buf});
+            pdfDoc=await loadingTask.promise;
+            curPage=1;
+            container.style.display='block';
+            renderPage();
+            st.className='ptool-status';
+        }catch(e){ setStatus(st,'Error loading PDF: '+e.message,'error'); }
+    }
+
+    function renderPage(){
+        if(!pdfDoc) return;
+        pdfDoc.getPage(curPage).then(function(page){
+            var vp=page.getViewport({scale:1.5});
+            canvas.width=vp.width; canvas.height=vp.height;
+            page.render({canvasContext:ctx,viewport:vp});
+            pageInfo.textContent='Page '+curPage+' of '+pdfDoc.numPages;
+            prevBtn.disabled=curPage===1;
+            nextBtn.disabled=curPage===pdfDoc.numPages;
+        });
+    }
+
+    prevBtn.addEventListener('click',function(){ if(curPage>1){ curPage--; renderPage(); } });
+    nextBtn.addEventListener('click',function(){ if(curPage<pdfDoc.numPages){ curPage++; renderPage(); } });
+})();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</body>
+</html>

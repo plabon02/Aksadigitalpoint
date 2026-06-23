@@ -93,7 +93,22 @@ namespace AksaPdfAddin
             {
                 string path = PickFile("Open PDF File", "PDF Files (*.pdf)|*.pdf|All Files (*.*)|*.*", false, null);
                 if (path == null) return;
-                _app.Documents.Open(path);
+
+                object missing = System.Reflection.Missing.Value;
+                object confirmConversions = false;
+                object readOnly = false;
+                object addToRecentFiles = false;
+                object format = Word.WdOpenFormat.wdOpenFormatAuto;
+
+                var doc = _app.Documents.Open(path,
+                    ref confirmConversions, ref readOnly, ref addToRecentFiles,
+                    ref missing, ref missing, ref missing, ref missing,
+                    ref missing, ref format, ref missing, ref missing,
+                    ref missing, ref missing, ref missing, ref missing);
+
+                // Set optimal viewing layout
+                _app.ActiveWindow.View.Type = Word.WdViewType.wdPrintView;
+                _app.ActiveWindow.View.Zoom.PageFit = Word.WdPageFit.wdPageFitBestFit;
             }
             catch (Exception ex) { MessageBox.Show("Error: " + ex.Message, "Open PDF Error"); }
         }
@@ -126,6 +141,13 @@ namespace AksaPdfAddin
             {
                 string input = PickFile("Select PDF file", "PDF Files (*.pdf)|*.pdf", false, null);
                 if (input == null) return;
+
+                MessageBox.Show(
+                    "PDF to Word conversion uses Word's built-in converter.\n\n" +
+                    "Note: Complex PDF layouts may not convert perfectly.\n" +
+                    "Text, images, and shapes may shift between pages.\n\n" +
+                    "For best results, use simple text-based PDFs.",
+                    "PDF to Word", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 string output = PickFile("Save Word document as", "Word Documents (*.docx)|*.docx", true,
                     Path.GetFileNameWithoutExtension(input) + ".docx");

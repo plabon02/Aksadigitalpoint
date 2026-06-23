@@ -6,7 +6,7 @@
 
         <!-- ===== FILE ===== -->
         <group id="grpFile" label="File">
-          <button id="btnOpenPdf" size="large" label="Open PDF" onAction="OnOpenPdf" getImage="GetImage" screentip="Open PDF" supertip="Open a PDF file in the default PDF viewer" />
+          <button id="btnOpenPdf" size="large" label="Open PDF" onAction="OnOpenPdf" getImage="GetImage" screentip="Open PDF" supertip="Open a PDF file in the default PDF viewer (Edge / Adobe Reader)" />
         </group>
 
         <!-- ===== CONVERT ===== -->
