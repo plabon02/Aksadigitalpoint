@@ -52,11 +52,15 @@
         </div>
         <div class="hero-visual">
             <div class="slider-wrap" id="heroSlider">
+                <div class="slider-track">
                     <img src="images/hero-1.png" alt="AKSA 10X FASTER" class="slide-img active">
                     <img src="images/hero-2.png" alt="AKSA 10X FASTER" class="slide-img">
                     <img src="images/hero-3.png" alt="AKSA 10X FASTER" class="slide-img">
                     <img src="images/hero-4.png" alt="AKSA 10X FASTER" class="slide-img">
                     <img src="images/hero-5.png" alt="AKSA 10X FASTER" class="slide-img">
+                </div>
+                <button class="slider-arrow slider-prev" id="sliderPrev"><i class='bx bx-chevron-left'></i></button>
+                <button class="slider-arrow slider-next" id="sliderNext"><i class='bx bx-chevron-right'></i></button>
                 <div class="slider-dots" id="sliderDots">
                     <span class="active" data-index="0"></span>
                     <span data-index="1"></span>
@@ -407,17 +411,19 @@
     }
 })();
 
-// Hero slider (image swap)
+// Hero slider with fade + arrows
 (function(){
     var imgs = document.querySelectorAll('.slide-img');
     var dots = document.querySelectorAll('#sliderDots span');
+    var prevBtn = document.getElementById('sliderPrev');
+    var nextBtn = document.getElementById('sliderNext');
     if (!imgs.length || !dots.length) return;
     var current = 0;
     var timer = null;
 
     function show(idx){
         imgs.forEach(function(img, i){
-            img.style.display = i === idx ? 'block' : 'none';
+            img.classList.toggle('active', i === idx);
         });
         dots.forEach(function(d, i){
             d.classList.toggle('active', i === idx);
@@ -425,10 +431,8 @@
         current = idx;
     }
 
-    function next(){
-        show((current + 1) % imgs.length);
-        resetAuto();
-    }
+    function prev(){ show((current - 1 + imgs.length) % imgs.length); resetAuto(); }
+    function next(){ show((current + 1) % imgs.length); resetAuto(); }
 
     dots.forEach(function(d){
         d.addEventListener('click', function(){
@@ -437,11 +441,13 @@
         });
     });
 
-    function startAuto(){ timer = setInterval(next, 4000); }
+    if(prevBtn) prevBtn.addEventListener('click', prev);
+    if(nextBtn) nextBtn.addEventListener('click', next);
+
+    function startAuto(){ timer = setInterval(next, 5000); }
     function stopAuto(){ if(timer){ clearInterval(timer); timer = null; } }
     function resetAuto(){ stopAuto(); startAuto(); }
 
-    // Init: show first
     show(0);
     startAuto();
 
