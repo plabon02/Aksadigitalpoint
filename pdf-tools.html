@@ -53,7 +53,6 @@
 
         .ptool-panel { display: none; max-width: 720px; margin: 0 auto; }
         .ptool-panel.active { display: block; }
-
         .ptool-box {
             background: var(--white); border-radius: var(--radius); padding: 32px;
             border: 1px solid var(--card-border); box-shadow: var(--box-shadow);
@@ -119,6 +118,35 @@
             .info-grid { grid-template-columns: 1fr; }
             .ptool-box { padding: 20px; }
         }
+
+        /* --- iLovePDF-style Hub --- */
+        .ptool-hub { display: block; }
+        .ptool-hub.hidden { display: none; }
+        .ptool-workspace { display: none; }
+        .ptool-workspace.active { display: block; }
+
+        .ptool-cats { display: flex; justify-content: center; gap: 4px; flex-wrap: wrap; margin-bottom: 32px; }
+        .ptool-cat {
+            padding: 8px 20px; border-radius: 20px; border: none; background: var(--bg-color);
+            cursor: pointer; font-size: 13px; font-weight: 500; font-family: inherit;
+            color: var(--font-light); transition: 0.3s;
+        }
+        .ptool-cat:hover { background: rgba(230,0,109,0.08); color: var(--main-color); }
+        .ptool-cat.active { background: var(--gradient-primary); color: var(--white); }
+
+        .tool-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+        .tool-card {
+            background: var(--white); border: 1px solid var(--card-border); border-radius: var(--radius-sm);
+            padding: 24px 16px; text-align: center; cursor: pointer; transition: 0.3s;
+        }
+        .tool-card:hover { border-color: var(--main-color); box-shadow: var(--hover-shadow); transform: translateY(-2px); }
+        .tool-card i { font-size: 32px; color: var(--main-color); margin-bottom: 10px; }
+        .tool-card h4 { font-size: 14px; margin-bottom: 4px; }
+        .tool-card p { font-size: 12px; color: var(--font-color); }
+        .tool-card .badge { display: inline-block; font-size: 10px; background: var(--gradient-primary); color: #fff; padding: 2px 8px; border-radius: 10px; margin-top: 6px; }
+
+        .back-link { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; color: var(--main-color); cursor: pointer; margin-bottom: 16px; font-weight: 500; text-decoration: none; }
+        .back-link:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -142,30 +170,23 @@
 <section class="ptool" id="pdfTools">
     <div class="container">
         <h2 class="section-title">Online <span class="gradient">PDF Tools</span></h2>
-        <p class="ptool-desc">Merge, split, extract, rotate — all in your browser. Nothing is uploaded to any server.</p>
+        <p class="ptool-desc">All tools run in your browser. Nothing is uploaded to any server.</p>
 
-        <div class="ptool-tabs">
-            <button class="ptool-tab active" data-tab="merge"><i class='bx bx-layer'></i> Merge</button>
-            <button class="ptool-tab" data-tab="split"><i class='bx bx-cut'></i> Split</button>
-            <button class="ptool-tab" data-tab="extract"><i class='bx bx-copy-alt'></i> Extract</button>
-            <button class="ptool-tab" data-tab="delete"><i class='bx bx-trash'></i> Delete</button>
-            <button class="ptool-tab" data-tab="reorder"><i class='bx bx-sort'></i> Reorder</button>
-            <button class="ptool-tab" data-tab="rotate"><i class='bx bx-rotate-right'></i> Rotate</button>
-            <button class="ptool-tab" data-tab="crop"><i class='bx bx-crop'></i> Crop</button>
-            <button class="ptool-tab" data-tab="resize"><i class='bx bx-expand'></i> Resize</button>
-            <button class="ptool-tab" data-tab="nup"><i class='bx bx-grid-alt'></i> N-up</button>
-            <button class="ptool-tab" data-tab="info"><i class='bx bx-info-circle'></i> Info</button>
-            <button class="ptool-tab" data-tab="view"><i class='bx bx-show'></i> View</button>
-            <button class="ptool-tab" data-tab="convert"><i class='bx bx-transfer-alt'></i> Convert</button>
-            <button class="ptool-tab" data-tab="edit"><i class='bx bx-edit-alt'></i> Edit</button>
-            <button class="ptool-tab" data-tab="overlay"><i class='bx bx-layers'></i> Overlay</button>
-            <button class="ptool-tab" data-tab="sign"><i class='bx bx-pen'></i> Sign</button>
-            <button class="ptool-tab" data-tab="extracttext"><i class='bx bx-text'></i> Extract Text</button>
-            <button class="ptool-tab" data-tab="invert"><i class='bx bx-palette'></i> Invert</button>
+        <!-- === HUB: category nav + card grid === -->
+        <div class="ptool-hub" id="toolHub">
+            <div class="ptool-cats" id="toolCats">
+                <button class="ptool-cat active" data-cat="all">All</button>
+                <button class="ptool-cat" data-cat="organize">Organize</button>
+                <button class="ptool-cat" data-cat="convert">Convert</button>
+                <button class="ptool-cat" data-cat="edit">Edit</button>
+                <button class="ptool-cat" data-cat="security">Security</button>
+                <button class="ptool-cat" data-cat="info">Info &amp; View</button>
+            </div>
+            <div class="tool-grid" id="toolGrid"></div>
         </div>
 
-        <!-- MERGE -->
-        <div class="ptool-panel active" id="panel-merge">
+        <!-- === WORKSPACE PANELS (shown when a tool card is clicked) === -->
+        <div class="ptool-panel" id="panel-merge">
             <div class="ptool-box">
                 <h3>Merge PDF</h3>
                 <p class="desc">Combine multiple PDF files into one document.</p>
@@ -673,17 +694,84 @@
     if(typeof PDFLib==='undefined'){ if(retries>0){setTimeout(function(){initTools(retries-1);},200);} return; }
     window.pdfLib=window.PDFLib;
 
-// ========== TOOL TABS ==========
+// ========== TOOL HUB (iLovePDF-style) ==========
 (function(){
-    var tabs = document.querySelectorAll('.ptool-tab');
-    var panels = document.querySelectorAll('.ptool-panel');
-    tabs.forEach(function(tab){
-        tab.addEventListener('click', function(){
-            tabs.forEach(function(t){ t.classList.remove('active'); });
-            panels.forEach(function(p){ p.classList.remove('active'); });
-            tab.classList.add('active');
-            document.getElementById('panel-' + tab.getAttribute('data-tab')).classList.add('active');
+    var tools=[
+        {id:'merge',cat:'organize',icon:'bx bx-layer',name:'Merge PDF',desc:'Combine PDFs into one document'},
+        {id:'split',cat:'organize',icon:'bx bx-cut',name:'Split PDF',desc:'Separate a PDF into individual pages'},
+        {id:'extract',cat:'organize',icon:'bx bx-copy-alt',name:'Extract Pages',desc:'Extract selected pages into a new PDF'},
+        {id:'delete',cat:'organize',icon:'bx bx-trash',name:'Delete Pages',desc:'Remove specific pages from a PDF'},
+        {id:'reorder',cat:'organize',icon:'bx bx-sort',name:'Reorder',desc:'Arrange pages in a new order'},
+        {id:'nup',cat:'organize',icon:'bx bx-grid-alt',name:'N-up Layout',desc:'Place multiple pages per sheet'},
+        {id:'rotate',cat:'edit',icon:'bx bx-rotate-right',name:'Rotate',desc:'Rotate all PDF pages'},
+        {id:'crop',cat:'edit',icon:'bx bx-crop',name:'Crop',desc:'Crop page margins'},
+        {id:'resize',cat:'edit',icon:'bx bx-expand',name:'Resize',desc:'Change page size (A4, Letter, etc.)'},
+        {id:'convert',cat:'convert',icon:'bx bx-transfer-alt',name:'Convert to PDF',desc:'Images/Text → PDF & PDF → Images'},
+        {id:'extracttext',cat:'convert',icon:'bx bx-text',name:'Extract Text',desc:'Extract text content from a PDF'},
+        {id:'sign',cat:'edit',icon:'bx bx-pen',name:'Sign',desc:'Add a signature image to pages'},
+        {id:'overlay',cat:'edit',icon:'bx bx-layers',name:'Overlay',desc:'Layer one PDF on top of another'},
+        {id:'invert',cat:'edit',icon:'bx bx-palette',name:'Invert Colors',desc:'Create a dark-mode PDF'},
+        {id:'edit',cat:'edit',icon:'bx bx-edit-alt',name:'Edit PDF',desc:'Watermark, numbers, hdr/ftr, redact, metadata'},
+        {id:'redact',cat:'security',icon:'bx bx-hide',name:'Redact',desc:'Black-out sensitive text'},
+        {id:'info',cat:'info',icon:'bx bx-info-circle',name:'PDF Info',desc:'View file metadata and properties'},
+        {id:'view',cat:'info',icon:'bx bx-show',name:'PDF Viewer',desc:'Preview pages in your browser'}
+    ];
+
+    var hub=document.getElementById('toolHub');
+    var grid=document.getElementById('toolGrid');
+    var cats=document.getElementById('toolCats');
+    var panels=document.querySelectorAll('.ptool-panel');
+    var currentCat='all';
+
+    // Build cards
+    function renderGrid(cat){
+        var filtered=tools.filter(function(t){ return cat==='all'||t.cat===cat; });
+        var h='';
+        filtered.forEach(function(t){
+            h+='<div class="tool-card" data-tool="'+t.id+'"><i class="'+t.icon+'"></i><h4>'+t.name+'</h4><p>'+t.desc+'</p></div>';
         });
+        grid.innerHTML=h;
+        grid.querySelectorAll('.tool-card').forEach(function(card){
+            card.addEventListener('click',function(){
+                var id=this.dataset.tool;
+                showPanel(id);
+            });
+        });
+    }
+
+    function showPanel(id){
+        hub.classList.add('hidden');
+        panels.forEach(function(p){ p.classList.remove('active'); });
+        var panel=document.getElementById('panel-'+id);
+        if(panel) panel.classList.add('active');
+    }
+
+    function showHub(){
+        hub.classList.remove('hidden');
+        panels.forEach(function(p){ p.classList.remove('active'); });
+    }
+
+    // Category filter
+    cats.querySelectorAll('.ptool-cat').forEach(function(btn){
+        btn.addEventListener('click',function(){
+            cats.querySelectorAll('.ptool-cat').forEach(function(b){ b.classList.remove('active'); });
+            this.classList.add('active');
+            currentCat=this.dataset.cat;
+            renderGrid(currentCat);
+        });
+    });
+
+    // Render default (All)
+    renderGrid('all');
+
+    // Add back buttons to all panels
+    panels.forEach(function(p){
+        var box=p.querySelector('.ptool-box');
+        var backBtn=document.createElement('a');
+        backBtn.className='back-link';
+        backBtn.innerHTML='<i class="bx bx-arrow-back"></i> All Tools';
+        box.insertBefore(backBtn,box.firstChild);
+        backBtn.addEventListener('click',function(e){ e.preventDefault(); showHub(); });
     });
 })();
 
