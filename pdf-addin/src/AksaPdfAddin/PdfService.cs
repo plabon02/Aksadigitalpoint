@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
+using System.Windows.Forms;
 using Word = Microsoft.Office.Interop.Word;
 
 namespace AksaPdfAddin
@@ -19,22 +19,19 @@ namespace AksaPdfAddin
 
     public class PdfService
     {
-        // ===================== WORD → PDF =====================
+        // ===================== WORD TO PDF =====================
 
         public void WordToPdf(Word.Document doc, string pdfPath)
         {
             object missing = System.Reflection.Missing.Value;
             object outputFile = pdfPath;
             object fileFormat = Word.WdSaveFormat.wdFormatPDF;
-
-            doc.SaveAs2(ref outputFile,
-                ref fileFormat, ref missing, ref missing, ref missing,
-                ref missing, ref missing, ref missing, ref missing,
-                ref missing, ref missing, ref missing, ref missing,
-                ref missing, ref missing, ref missing);
+            doc.SaveAs2(ref outputFile, ref fileFormat, ref missing, ref missing, ref missing,
+                ref missing, ref missing, ref missing, ref missing, ref missing,
+                ref missing, ref missing, ref missing, ref missing, ref missing, ref missing);
         }
 
-        // ===================== PDF → WORD =====================
+        // ===================== PDF TO WORD =====================
 
         public void PdfToWord(Word.Application app, string pdfPath, string docxPath)
         {
@@ -54,6 +51,8 @@ namespace AksaPdfAddin
             doc.Close();
         }
 
+        // ===================== BATCH CONVERT =====================
+
         public void BatchWordToPdf(Word.Application app, string wordPath, string pdfPath)
         {
             object missing = System.Reflection.Missing.Value;
@@ -71,23 +70,10 @@ namespace AksaPdfAddin
             doc.Close();
         }
 
-        public void BatchPdfToWord(Word.Application app, string pdfPath, string docxPath)
-        {
-            PdfToWord(app, pdfPath, docxPath);
-        }
-
         // ===================== MERGE PDF =====================
 
         public void MergePdf(List<string> pdfFiles, string outputPath)
         {
-            // Uses Word's native PDF merging via InsertFile
-            // Alternatively uses a PDF library helper
-            NativeMergeUsingWord(pdfFiles, outputPath);
-        }
-
-        private void NativeMergeUsingWord(List<string> pdfFiles, string outputPath)
-        {
-            // Create a temporary Word document and insert each PDF as content
             Word.Application app = null;
             Word.Document doc = null;
 
@@ -104,14 +90,7 @@ namespace AksaPdfAddin
                         doc.Content.InsertBreak(ref breakType);
                     }
 
-                    object missing = System.Reflection.Missing.Value;
-                    object fileName = pdfFiles[i];
-                    object confirmConversions = false;
-                    object link = false;
-                    object attachment = false;
-
-                    doc.Application.Selection.InsertFile(ref fileName,
-                        ref missing, ref confirmConversions, ref link, ref attachment);
+                    doc.Application.Selection.InsertFile(pdfFiles[i]);
                 }
 
                 WordToPdf(doc, outputPath);
@@ -127,57 +106,19 @@ namespace AksaPdfAddin
 
         public void SplitPdf(string pdfPath, string outputFolder)
         {
-            NativeSplitUsingWord(pdfPath, outputFolder);
-        }
-
-        private void NativeSplitUsingWord(string pdfPath, string outputFolder)
-        {
             Word.Application app = null;
             Word.Document doc = null;
 
             try
             {
                 app = new Word.Application { Visible = false };
-
-                object missing = System.Reflection.Missing.Value;
-                object confirmConversions = false;
-                object readOnly = false;
-                object addToRecentFiles = false;
-                object format = Word.WdOpenFormat.wdOpenFormatAuto;
-
-                doc = app.Documents.Open(pdfPath,
-                    ref confirmConversions, ref readOnly, ref addToRecentFiles,
-                    ref missing, ref missing, ref missing, ref missing,
-                    ref missing, ref format, ref missing, ref missing,
-                    ref missing, ref missing, ref missing, ref missing);
+                doc = OpenPdf(app, pdfPath);
 
                 int pageCount = doc.ComputeStatistics(Word.WdStatistic.wdStatisticPages);
 
                 for (int i = 1; i <= pageCount; i++)
                 {
-                    doc.Application.Selection.GoTo(Word.WdGoToItem.wdGoToPage,
-                        Word.WdGoToDirection.wdGoToFirst, missing, i);
-
-                    var range = doc.Application.Selection.Range;
-                    range.Collapse(Word.WdCollapseDirection.wdCollapseStart);
-
-                    if (i < pageCount)
-                    {
-                        object what = Word.WdGoToItem.wdGoToPage;
-                        object which = Word.WdGoToDirection.wdGoToAbsolute;
-                        object count = i + 1;
-                        doc.Application.Selection.GoTo(ref what, ref which, ref count, ref missing);
-
-                        var endRange = doc.Application.Selection.Range;
-                        endRange.Collapse(Word.WdCollapseDirection.wdCollapseStart);
-
-                        range.End = endRange.Start;
-                    }
-                    else
-                    {
-                        range.End = doc.Content.End;
-                    }
-
+                    var range = GetPageRange(doc, i, pageCount);
                     range.Copy();
 
                     var pageDoc = app.Documents.Add();
@@ -199,11 +140,6 @@ namespace AksaPdfAddin
 
         public void ExtractPages(string pdfPath, string outputPath, List<int> pages)
         {
-            NativeExtractUsingWord(pdfPath, outputPath, pages);
-        }
-
-        private void NativeExtractUsingWord(string pdfPath, string outputPath, List<int> pages)
-        {
             Word.Application app = null;
             Word.Document doc = null;
             Word.Document resultDoc = null;
@@ -211,20 +147,9 @@ namespace AksaPdfAddin
             try
             {
                 app = new Word.Application { Visible = false };
-
-                object missing = System.Reflection.Missing.Value;
-                object confirmConversions = false;
-                object readOnly = false;
-                object addToRecentFiles = false;
-                object format = Word.WdOpenFormat.wdOpenFormatAuto;
-
-                doc = app.Documents.Open(pdfPath,
-                    ref confirmConversions, ref readOnly, ref addToRecentFiles,
-                    ref missing, ref missing, ref missing, ref missing,
-                    ref missing, ref format, ref missing, ref missing,
-                    ref missing, ref missing, ref missing, ref missing);
-
+                doc = OpenPdf(app, pdfPath);
                 resultDoc = app.Documents.Add();
+
                 int pageCount = doc.ComputeStatistics(Word.WdStatistic.wdStatisticPages);
 
                 for (int pi = 0; pi < pages.Count; pi++)
@@ -238,28 +163,7 @@ namespace AksaPdfAddin
                         resultDoc.Content.InsertBreak(ref breakType);
                     }
 
-                    doc.Application.Selection.GoTo(Word.WdGoToItem.wdGoToPage,
-                        Word.WdGoToDirection.wdGoToFirst, missing, pageNum);
-
-                    var range = doc.Application.Selection.Range;
-                    range.Collapse(Word.WdCollapseDirection.wdCollapseStart);
-
-                    if (pageNum < pageCount)
-                    {
-                        object what = Word.WdGoToItem.wdGoToPage;
-                        object which = Word.WdGoToDirection.wdGoToAbsolute;
-                        object count = pageNum + 1;
-                        doc.Application.Selection.GoTo(ref what, ref which, ref count, ref missing);
-
-                        var endRange = doc.Application.Selection.Range;
-                        endRange.Collapse(Word.WdCollapseDirection.wdCollapseStart);
-                        range.End = endRange.Start;
-                    }
-                    else
-                    {
-                        range.End = doc.Content.End;
-                    }
-
+                    var range = GetPageRange(doc, pageNum, pageCount);
                     range.Copy();
                     resultDoc.Application.Selection.Paste();
                 }
@@ -274,14 +178,34 @@ namespace AksaPdfAddin
             }
         }
 
+        private Word.Range GetPageRange(Word.Document doc, int pageNum, int pageCount)
+        {
+            object missing = System.Reflection.Missing.Value;
+            object what = Word.WdGoToItem.wdGoToPage;
+            object which = Word.WdGoToDirection.wdGoToAbsolute;
+
+            doc.Application.Selection.GoTo(ref what, ref which, ref missing, pageNum);
+            var range = doc.Application.Selection.Range;
+            range.Collapse(Word.WdCollapseDirection.wdCollapseStart);
+
+            if (pageNum < pageCount)
+            {
+                doc.Application.Selection.GoTo(ref what, ref which, ref missing, pageNum + 1);
+                var endRange = doc.Application.Selection.Range;
+                endRange.Collapse(Word.WdCollapseDirection.wdCollapseStart);
+                range.End = endRange.Start;
+            }
+            else
+            {
+                range.End = doc.Content.End;
+            }
+
+            return range;
+        }
+
         // ===================== PROTECT PDF =====================
 
         public void ProtectPdf(string inputPath, string outputPath, string password)
-        {
-            NativeProtectUsingWord(inputPath, outputPath, password);
-        }
-
-        private void NativeProtectUsingWord(string inputPath, string outputPath, string password)
         {
             Word.Application app = null;
             Word.Document doc = null;
@@ -289,24 +213,18 @@ namespace AksaPdfAddin
             try
             {
                 app = new Word.Application { Visible = false };
+                doc = OpenPdf(app, inputPath);
 
                 object missing = System.Reflection.Missing.Value;
-                object confirmConversions = false;
-                object readOnly = false;
-                object addToRecentFiles = false;
-                object format = Word.WdOpenFormat.wdOpenFormatAuto;
+                object outputFile = outputPath;
+                object fileFormat = Word.WdSaveFormat.wdFormatPDF;
 
-                doc = app.Documents.Open(inputPath,
-                    ref confirmConversions, ref readOnly, ref addToRecentFiles,
-                    ref missing, ref missing, ref missing, ref missing,
-                    ref missing, ref format, ref missing, ref missing,
-                    ref missing, ref missing, ref missing, ref missing);
+                // Set document protection password
+                doc.Password = password;
 
-                // Password protect the Word document before saving as PDF
-                object passwordObj = password;
-                doc.Password = passwordObj.ToString();
-
-                WordToPdf(doc, outputPath);
+                doc.SaveAs2(ref outputFile, ref fileFormat, ref missing, ref missing, ref missing,
+                    ref missing, ref missing, ref missing, ref missing, ref missing,
+                    ref missing, ref missing, ref missing, ref missing, ref missing, ref missing);
             }
             finally
             {
@@ -319,8 +237,6 @@ namespace AksaPdfAddin
 
         public void UnlockPdf(string inputPath, string outputPath, string password)
         {
-            // Opens the password-protected PDF (Word will prompt for password)
-            // and saves as unprotected PDF
             Word.Application app = null;
             Word.Document doc = null;
 
@@ -366,23 +282,11 @@ namespace AksaPdfAddin
             try
             {
                 app = new Word.Application { Visible = false };
-
-                object missing = System.Reflection.Missing.Value;
-                object confirmConversions = false;
-                object readOnly = true;
-                object addToRecentFiles = false;
-                object format = Word.WdOpenFormat.wdOpenFormatAuto;
-
-                doc = app.Documents.Open(pdfPath,
-                    ref confirmConversions, ref readOnly, ref addToRecentFiles,
-                    ref missing, ref missing, ref missing, ref missing,
-                    ref missing, ref format, ref missing, ref missing,
-                    ref missing, ref missing, ref missing, ref missing);
+                doc = OpenPdf(app, pdfPath);
 
                 info.PageCount = doc.ComputeStatistics(Word.WdStatistic.wdStatisticPages);
                 info.Encrypted = false;
 
-                // Check protection
                 if (doc.ProtectionType != Word.WdProtectionType.wdNoProtection)
                 {
                     info.Encrypted = true;
@@ -403,6 +307,23 @@ namespace AksaPdfAddin
             return info;
         }
 
+        // ===================== HELPERS =====================
+
+        private Word.Document OpenPdf(Word.Application app, string pdfPath)
+        {
+            object missing = System.Reflection.Missing.Value;
+            object confirmConversions = false;
+            object readOnly = false;
+            object addToRecentFiles = false;
+            object format = Word.WdOpenFormat.wdOpenFormatAuto;
+
+            return app.Documents.Open(pdfPath,
+                ref confirmConversions, ref readOnly, ref addToRecentFiles,
+                ref missing, ref missing, ref missing, ref missing,
+                ref missing, ref format, ref missing, ref missing,
+                ref missing, ref missing, ref missing, ref missing);
+        }
+
         private static string FormatFileSize(long bytes)
         {
             string[] sizes = { "B", "KB", "MB", "GB" };
@@ -411,7 +332,7 @@ namespace AksaPdfAddin
             while (len >= 1024 && order < sizes.Length - 1)
             {
                 order++;
-                len = len / 1024;
+                len /= 1024;
             }
             return $"{len:0.##} {sizes[order]}";
         }

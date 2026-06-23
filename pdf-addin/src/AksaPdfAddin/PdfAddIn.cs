@@ -53,10 +53,7 @@ namespace AksaPdfAddin
 
         public void Ribbon_Load(Office.IRibbonUI ribbonUi) { _ribbon = ribbonUi; }
 
-        public string GetImage(Office.IRibbonControl c)
-        {
-            return "";
-        }
+        public string GetImage(Office.IRibbonControl c) { return ""; }
 
         private Word.Document Doc
         {
@@ -68,7 +65,40 @@ namespace AksaPdfAddin
             }
         }
 
-        // ===================== WORD → PDF =====================
+        private bool ConfirmOpen(string msg)
+        {
+            return MessageBox.Show(msg + "\n\nOpen the file now?", "AKSA PDF Tools",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes;
+        }
+
+        private string PickFile(string title, string filter, bool save, string defaultName)
+        {
+            if (save)
+            {
+                var dlg = new SaveFileDialog { Title = title, Filter = filter, FileName = defaultName };
+                return dlg.ShowDialog() == DialogResult.OK ? dlg.FileName : null;
+            }
+            else
+            {
+                var dlg = new OpenFileDialog { Title = title, Filter = filter };
+                return dlg.ShowDialog() == DialogResult.OK ? dlg.FileName : null;
+            }
+        }
+
+        // ===================== OPEN PDF =====================
+
+        public void OnOpenPdf(Office.IRibbonControl c)
+        {
+            try
+            {
+                string path = PickFile("Open PDF File", "PDF Files (*.pdf)|*.pdf|All Files (*.*)|*.*", false, null);
+                if (path == null) return;
+                _app.Documents.Open(path);
+            }
+            catch (Exception ex) { MessageBox.Show("Error: " + ex.Message, "Open PDF Error"); }
+        }
+
+        // ===================== WORD TO PDF =====================
 
         public void OnWordToPdf(Office.IRibbonControl c)
         {
@@ -77,161 +107,113 @@ namespace AksaPdfAddin
                 var doc = Doc;
                 if (doc == null) return;
 
-                var dlg = new SaveFileDialog
-                {
-                    Title = "Save as PDF",
-                    Filter = "PDF Files (*.pdf)|*.pdf",
-                    FileName = Path.GetFileNameWithoutExtension(doc.FullName) + ".pdf"
-                };
+                string path = PickFile("Save as PDF", "PDF Files (*.pdf)|*.pdf", true,
+                    Path.GetFileNameWithoutExtension(doc.FullName) + ".pdf");
+                if (path == null) return;
 
-                if (dlg.ShowDialog() != DialogResult.OK) return;
-
-                _pdf.WordToPdf(doc, dlg.FileName);
-                var result = MessageBox.Show(
-                    "PDF saved successfully.\n\nOpen the PDF file now?",
-                    "AKSA PDF Tools", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-                if (result == DialogResult.Yes)
-                    Process.Start(dlg.FileName);
+                _pdf.WordToPdf(doc, path);
+                if (ConfirmOpen("PDF saved successfully."))
+                    Process.Start(path);
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message, "Word → PDF Error");
-            }
+            catch (Exception ex) { MessageBox.Show("Error: " + ex.Message, "Word to PDF Error"); }
         }
 
-        // ===================== PDF → WORD =====================
+        // ===================== PDF TO WORD =====================
 
         public void OnPdfToWord(Office.IRibbonControl c)
         {
             try
             {
-                var ofd = new OpenFileDialog
-                {
-                    Title = "Select PDF file",
-                    Filter = "PDF Files (*.pdf)|*.pdf"
-                };
-                if (ofd.ShowDialog() != DialogResult.OK) return;
+                string input = PickFile("Select PDF file", "PDF Files (*.pdf)|*.pdf", false, null);
+                if (input == null) return;
 
-                var sfd = new SaveFileDialog
-                {
-                    Title = "Save Word document as",
-                    Filter = "Word Documents (*.docx)|*.docx",
-                    FileName = Path.GetFileNameWithoutExtension(ofd.FileName) + ".docx"
-                };
-                if (sfd.ShowDialog() != DialogResult.OK) return;
+                string output = PickFile("Save Word document as", "Word Documents (*.docx)|*.docx", true,
+                    Path.GetFileNameWithoutExtension(input) + ".docx");
+                if (output == null) return;
 
-                _pdf.PdfToWord(_app, ofd.FileName, sfd.FileName);
-
-                var result = MessageBox.Show(
-                    "Word document saved successfully.\n\nOpen the document now?",
-                    "AKSA PDF Tools", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-                if (result == DialogResult.Yes)
-                    Process.Start(sfd.FileName);
+                _pdf.PdfToWord(_app, input, output);
+                if (ConfirmOpen("Word document saved successfully."))
+                    Process.Start(output);
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message, "PDF → Word Error");
-            }
+            catch (Exception ex) { MessageBox.Show("Error: " + ex.Message, "PDF to Word Error"); }
         }
 
-        // ===================== BATCH =====================
+        // ===================== BATCH CONVERT =====================
 
         public void OnBatchWordToPdf(Office.IRibbonControl c)
         {
             try
             {
-                var ofd = new OpenFileDialog
+                var dlg = new OpenFileDialog
                 {
-                    Title = "Select Word files to convert",
+                    Title = "Select Word files",
                     Filter = "Word Documents (*.docx;*.doc)|*.docx;*.doc",
                     Multiselect = true
                 };
-                if (ofd.ShowDialog() != DialogResult.OK || ofd.FileNames.Length == 0) return;
+                if (dlg.ShowDialog() != DialogResult.OK || dlg.FileNames.Length == 0) return;
 
-                using (var fb = new FolderBrowserDialog { Description = "Select destination folder for PDFs" })
+                using (var fb = new FolderBrowserDialog { Description = "Select destination folder" })
                 {
                     if (fb.ShowDialog() != DialogResult.OK) return;
-                    string dest = fb.SelectedPath;
 
-                    int total = ofd.FileNames.Length;
                     int done = 0;
                     var errors = new List<string>();
-
-                    foreach (var file in ofd.FileNames)
+                    foreach (var file in dlg.FileNames)
                     {
                         try
                         {
-                            string pdfPath = Path.Combine(dest, Path.GetFileNameWithoutExtension(file) + ".pdf");
+                            string pdfPath = Path.Combine(fb.SelectedPath,
+                                Path.GetFileNameWithoutExtension(file) + ".pdf");
                             _pdf.BatchWordToPdf(_app, file, pdfPath);
                             done++;
                         }
-                        catch (Exception ex)
-                        {
-                            errors.Add(Path.GetFileName(file) + ": " + ex.Message);
-                        }
+                        catch (Exception ex) { errors.Add(Path.GetFileName(file) + ": " + ex.Message); }
                     }
 
-                    string msg = $"Converted {done} of {total} files successfully.";
-                    if (errors.Count > 0)
-                        msg += "\n\nErrors:\n" + string.Join("\n", errors);
-
+                    string msg = $"Converted {done} of {dlg.FileNames.Length} files.";
+                    if (errors.Count > 0) msg += "\n\nErrors:\n" + string.Join("\n", errors);
                     MessageBox.Show(msg, "Batch Convert Complete");
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message, "Batch Convert Error");
-            }
+            catch (Exception ex) { MessageBox.Show("Error: " + ex.Message, "Batch Convert Error"); }
         }
 
         public void OnBatchPdfToWord(Office.IRibbonControl c)
         {
             try
             {
-                var ofd = new OpenFileDialog
+                var dlg = new OpenFileDialog
                 {
-                    Title = "Select PDF files to convert",
+                    Title = "Select PDF files",
                     Filter = "PDF Files (*.pdf)|*.pdf",
                     Multiselect = true
                 };
-                if (ofd.ShowDialog() != DialogResult.OK || ofd.FileNames.Length == 0) return;
+                if (dlg.ShowDialog() != DialogResult.OK || dlg.FileNames.Length == 0) return;
 
-                using (var fb = new FolderBrowserDialog { Description = "Select destination folder for Word documents" })
+                using (var fb = new FolderBrowserDialog { Description = "Select destination folder" })
                 {
                     if (fb.ShowDialog() != DialogResult.OK) return;
-                    string dest = fb.SelectedPath;
 
-                    int total = ofd.FileNames.Length;
                     int done = 0;
                     var errors = new List<string>();
-
-                    foreach (var file in ofd.FileNames)
+                    foreach (var file in dlg.FileNames)
                     {
                         try
                         {
-                            string docxPath = Path.Combine(dest, Path.GetFileNameWithoutExtension(file) + ".docx");
-                            _pdf.BatchPdfToWord(_app, file, docxPath);
+                            string docxPath = Path.Combine(fb.SelectedPath,
+                                Path.GetFileNameWithoutExtension(file) + ".docx");
+                            _pdf.PdfToWord(_app, file, docxPath);
                             done++;
                         }
-                        catch (Exception ex)
-                        {
-                            errors.Add(Path.GetFileName(file) + ": " + ex.Message);
-                        }
+                        catch (Exception ex) { errors.Add(Path.GetFileName(file) + ": " + ex.Message); }
                     }
 
-                    string msg = $"Converted {done} of {total} files successfully.";
-                    if (errors.Count > 0)
-                        msg += "\n\nErrors:\n" + string.Join("\n", errors);
-
+                    string msg = $"Converted {done} of {dlg.FileNames.Length} files.";
+                    if (errors.Count > 0) msg += "\n\nErrors:\n" + string.Join("\n", errors);
                     MessageBox.Show(msg, "Batch Convert Complete");
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message, "Batch Convert Error");
-            }
+            catch (Exception ex) { MessageBox.Show("Error: " + ex.Message, "Batch Convert Error"); }
         }
 
         // ===================== MERGE PDF =====================
@@ -240,39 +222,26 @@ namespace AksaPdfAddin
         {
             try
             {
-                var ofd = new OpenFileDialog
+                var dlg = new OpenFileDialog
                 {
                     Title = "Select PDF files to merge",
                     Filter = "PDF Files (*.pdf)|*.pdf",
                     Multiselect = true
                 };
-                if (ofd.ShowDialog() != DialogResult.OK || ofd.FileNames.Length < 2)
+                if (dlg.ShowDialog() != DialogResult.OK || dlg.FileNames.Length < 2)
                 {
                     MessageBox.Show("Please select at least 2 PDF files.", "Merge PDF");
                     return;
                 }
 
-                var sfd = new SaveFileDialog
-                {
-                    Title = "Save merged PDF as",
-                    Filter = "PDF Files (*.pdf)|*.pdf",
-                    FileName = "Merged.pdf"
-                };
-                if (sfd.ShowDialog() != DialogResult.OK) return;
+                string output = PickFile("Save merged PDF as", "PDF Files (*.pdf)|*.pdf", true, "Merged.pdf");
+                if (output == null) return;
 
-                _pdf.MergePdf(ofd.FileNames.ToList(), sfd.FileName);
-
-                var result = MessageBox.Show(
-                    "PDFs merged successfully.\n\nOpen the merged file?",
-                    "AKSA PDF Tools", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-                if (result == DialogResult.Yes)
-                    Process.Start(sfd.FileName);
+                _pdf.MergePdf(dlg.FileNames.ToList(), output);
+                if (ConfirmOpen("PDFs merged successfully."))
+                    Process.Start(output);
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message, "Merge PDF Error");
-            }
+            catch (Exception ex) { MessageBox.Show("Error: " + ex.Message, "Merge PDF Error"); }
         }
 
         // ===================== SPLIT PDF =====================
@@ -281,28 +250,17 @@ namespace AksaPdfAddin
         {
             try
             {
-                var ofd = new OpenFileDialog
-                {
-                    Title = "Select PDF file to split",
-                    Filter = "PDF Files (*.pdf)|*.pdf"
-                };
-                if (ofd.ShowDialog() != DialogResult.OK) return;
+                string input = PickFile("Select PDF file to split", "PDF Files (*.pdf)|*.pdf", false, null);
+                if (input == null) return;
 
-                using (var fb = new FolderBrowserDialog { Description = "Select destination folder for split pages" })
+                using (var fb = new FolderBrowserDialog { Description = "Select destination folder" })
                 {
                     if (fb.ShowDialog() != DialogResult.OK) return;
-
-                    _pdf.SplitPdf(ofd.FileName, fb.SelectedPath);
-
-                    MessageBox.Show(
-                        "PDF split successfully.\nPages saved to: " + fb.SelectedPath,
-                        "AKSA PDF Tools");
+                    _pdf.SplitPdf(input, fb.SelectedPath);
+                    MessageBox.Show("PDF split successfully.\nPages saved to: " + fb.SelectedPath, "AKSA PDF Tools");
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message, "Split PDF Error");
-            }
+            catch (Exception ex) { MessageBox.Show("Error: " + ex.Message, "Split PDF Error"); }
         }
 
         // ===================== EXTRACT PAGES =====================
@@ -311,70 +269,55 @@ namespace AksaPdfAddin
         {
             try
             {
-                var ofd = new OpenFileDialog
+                string input = PickFile("Select PDF file", "PDF Files (*.pdf)|*.pdf", false, null);
+                if (input == null) return;
+
+                var form = new Form
                 {
-                    Title = "Select PDF file",
-                    Filter = "PDF Files (*.pdf)|*.pdf"
+                    Text = "Extract Pages",
+                    Size = new System.Drawing.Size(400, 160),
+                    FormBorderStyle = FormBorderStyle.FixedDialog,
+                    MaximizeBox = false,
+                    MinimizeBox = false,
+                    StartPosition = FormStartPosition.CenterScreen
                 };
-                if (ofd.ShowDialog() != DialogResult.OK) return;
 
-                string input = RequestInput(
-                    "Extract Pages",
-                    "Enter page numbers to extract (e.g. 1,3,5-8):",
-                    "1");
+                var lbl = new Label { Text = "Enter page numbers (e.g. 1,3,5-8):", Left = 12, Top = 12, Width = 360 };
+                var txt = new TextBox { Text = "1", Left = 12, Top = 40, Width = 360 };
+                var btnOk = new Button { Text = "OK", Left = 100, Top = 80, Width = 80, DialogResult = DialogResult.OK };
+                var btnCancel = new Button { Text = "Cancel", Left = 200, Top = 80, Width = 80, DialogResult = DialogResult.Cancel };
+                form.AcceptButton = btnOk;
+                form.CancelButton = btnCancel;
+                form.Controls.AddRange(new Control[] { lbl, txt, btnOk, btnCancel });
 
-                if (string.IsNullOrWhiteSpace(input)) return;
+                if (form.ShowDialog() != DialogResult.OK || string.IsNullOrWhiteSpace(txt.Text)) return;
 
-                var sfd = new SaveFileDialog
-                {
-                    Title = "Save extracted pages as",
-                    Filter = "PDF Files (*.pdf)|*.pdf",
-                    FileName = "Extracted.pdf"
-                };
-                if (sfd.ShowDialog() != DialogResult.OK) return;
+                var pages = ParsePageRange(txt.Text);
+                if (pages.Count == 0) { MessageBox.Show("No valid page numbers.", "Extract Pages"); return; }
 
-                var pages = ParsePageRange(input);
-                if (pages.Count == 0)
-                {
-                    MessageBox.Show("No valid page numbers entered.", "Extract Pages");
-                    return;
-                }
+                string output = PickFile("Save extracted pages as", "PDF Files (*.pdf)|*.pdf", true, "Extracted.pdf");
+                if (output == null) return;
 
-                _pdf.ExtractPages(ofd.FileName, sfd.FileName, pages);
-
-                var result = MessageBox.Show(
-                    "Pages extracted successfully.\n\nOpen the file?",
-                    "AKSA PDF Tools", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-                if (result == DialogResult.Yes)
-                    Process.Start(sfd.FileName);
+                _pdf.ExtractPages(input, output, pages);
+                if (ConfirmOpen("Pages extracted successfully."))
+                    Process.Start(output);
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message, "Extract Pages Error");
-            }
+            catch (Exception ex) { MessageBox.Show("Error: " + ex.Message, "Extract Pages Error"); }
         }
 
-        private List<int> ParsePageRange(string input)
+        private static List<int> ParsePageRange(string input)
         {
             var pages = new List<int>();
             foreach (var part in input.Split(','))
             {
-                var trimmed = part.Trim();
-                if (trimmed.Contains('-'))
+                var t = part.Trim();
+                if (t.Contains('-'))
                 {
-                    var range = trimmed.Split('-');
-                    if (int.TryParse(range[0], out int start) && int.TryParse(range[1], out int end))
-                    {
-                        for (int i = start; i <= end; i++)
-                            pages.Add(i);
-                    }
+                    var range = t.Split('-');
+                    if (int.TryParse(range[0], out int s) && int.TryParse(range[1], out int e))
+                        for (int i = s; i <= e; i++) pages.Add(i);
                 }
-                else
-                {
-                    if (int.TryParse(trimmed, out int num))
-                        pages.Add(num);
-                }
+                else if (int.TryParse(t, out int n)) pages.Add(n);
             }
             return pages.Distinct().OrderBy(p => p).ToList();
         }
@@ -385,36 +328,20 @@ namespace AksaPdfAddin
         {
             try
             {
-                var ofd = new OpenFileDialog
-                {
-                    Title = "Select PDF file to protect",
-                    Filter = "PDF Files (*.pdf)|*.pdf"
-                };
-                if (ofd.ShowDialog() != DialogResult.OK) return;
+                string input = PickFile("Select PDF file to protect", "PDF Files (*.pdf)|*.pdf", false, null);
+                if (input == null) return;
 
-                string password = RequestInput(
-                    "Protect PDF",
-                    "Enter password to protect the PDF:",
-                    "");
-
+                string password = RequestInput("Protect PDF", "Enter password:", "");
                 if (string.IsNullOrWhiteSpace(password)) return;
 
-                var sfd = new SaveFileDialog
-                {
-                    Title = "Save protected PDF as",
-                    Filter = "PDF Files (*.pdf)|*.pdf",
-                    FileName = Path.GetFileNameWithoutExtension(ofd.FileName) + "_protected.pdf"
-                };
-                if (sfd.ShowDialog() != DialogResult.OK) return;
+                string output = PickFile("Save protected PDF as", "PDF Files (*.pdf)|*.pdf", true,
+                    Path.GetFileNameWithoutExtension(input) + "_protected.pdf");
+                if (output == null) return;
 
-                _pdf.ProtectPdf(ofd.FileName, sfd.FileName, password);
-
+                _pdf.ProtectPdf(input, output, password);
                 MessageBox.Show("PDF protected successfully with password.", "AKSA PDF Tools");
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message, "Protect PDF Error");
-            }
+            catch (Exception ex) { MessageBox.Show("Error: " + ex.Message, "Protect PDF Error"); }
         }
 
         // ===================== UNLOCK PDF =====================
@@ -423,36 +350,20 @@ namespace AksaPdfAddin
         {
             try
             {
-                var ofd = new OpenFileDialog
-                {
-                    Title = "Select password-protected PDF",
-                    Filter = "PDF Files (*.pdf)|*.pdf"
-                };
-                if (ofd.ShowDialog() != DialogResult.OK) return;
+                string input = PickFile("Select password-protected PDF", "PDF Files (*.pdf)|*.pdf", false, null);
+                if (input == null) return;
 
-                string password = RequestInput(
-                    "Unlock PDF",
-                    "Enter the PDF password:",
-                    "");
-
+                string password = RequestInput("Unlock PDF", "Enter the PDF password:", "");
                 if (string.IsNullOrWhiteSpace(password)) return;
 
-                var sfd = new SaveFileDialog
-                {
-                    Title = "Save unlocked PDF as",
-                    Filter = "PDF Files (*.pdf)|*.pdf",
-                    FileName = Path.GetFileNameWithoutExtension(ofd.FileName) + "_unlocked.pdf"
-                };
-                if (sfd.ShowDialog() != DialogResult.OK) return;
+                string output = PickFile("Save unlocked PDF as", "PDF Files (*.pdf)|*.pdf", true,
+                    Path.GetFileNameWithoutExtension(input) + "_unlocked.pdf");
+                if (output == null) return;
 
-                _pdf.UnlockPdf(ofd.FileName, sfd.FileName, password);
-
+                _pdf.UnlockPdf(input, output, password);
                 MessageBox.Show("PDF unlocked successfully.", "AKSA PDF Tools");
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message, "Unlock PDF Error");
-            }
+            catch (Exception ex) { MessageBox.Show("Error: " + ex.Message, "Unlock PDF Error"); }
         }
 
         // ===================== PDF INFO =====================
@@ -461,16 +372,11 @@ namespace AksaPdfAddin
         {
             try
             {
-                var ofd = new OpenFileDialog
-                {
-                    Title = "Select PDF file",
-                    Filter = "PDF Files (*.pdf)|*.pdf"
-                };
-                if (ofd.ShowDialog() != DialogResult.OK) return;
+                string input = PickFile("Select PDF file", "PDF Files (*.pdf)|*.pdf", false, null);
+                if (input == null) return;
 
-                var info = _pdf.GetPdfInfo(ofd.FileName);
-
-                var msg = $"File: {Path.GetFileName(ofd.FileName)}\n" +
+                var info = _pdf.GetPdfInfo(input);
+                var msg = $"File: {Path.GetFileName(input)}\n" +
                           $"Pages: {info.PageCount}\n" +
                           $"Size: {info.FileSize}\n" +
                           $"Encrypted: {(info.Encrypted ? "Yes" : "No")}" +
@@ -478,10 +384,7 @@ namespace AksaPdfAddin
 
                 MessageBox.Show(msg, "PDF Info");
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message, "PDF Info Error");
-            }
+            catch (Exception ex) { MessageBox.Show("Error: " + ex.Message, "PDF Info Error"); }
         }
 
         // ===================== ABOUT =====================
@@ -491,12 +394,12 @@ namespace AksaPdfAddin
             MessageBox.Show(
                 "AKSA PDF Tools v1.0\n\n" +
                 "Word add-in for:\n" +
-                "• Word → PDF conversion\n" +
-                "• PDF → Word conversion\n" +
-                "• Merge / Split / Extract PDF\n" +
-                "• Protect / Unlock PDF\n" +
-                "• Batch conversion\n\n" +
-                "© 2026 AKSA DIGITAL POINT",
+                "\u2022 Word \u2192 PDF conversion\n" +
+                "\u2022 PDF \u2192 Word conversion\n" +
+                "\u2022 Merge / Split / Extract PDF\n" +
+                "\u2022 Protect / Unlock PDF\n" +
+                "\u2022 Batch conversion\n\n" +
+                "\u00a9 2026 AKSA DIGITAL POINT",
                 "About AKSA PDF Tools");
         }
 
@@ -507,40 +410,20 @@ namespace AksaPdfAddin
             var form = new Form
             {
                 Text = title,
-                Size = new System.Drawing.Size(400, 160),
+                Size = new System.Drawing.Size(400, 150),
                 FormBorderStyle = FormBorderStyle.FixedDialog,
                 MaximizeBox = false,
                 MinimizeBox = false,
                 StartPosition = FormStartPosition.CenterScreen
             };
 
-            var lbl = new Label
-            {
-                Text = prompt,
-                Left = 12,
-                Top = 12,
-                Width = 360,
-                Height = 30
-            };
-
-            var txt = new TextBox
-            {
-                Left = 12,
-                Top = 48,
-                Width = 360,
-                Height = 24,
-                Text = defaultValue
-            };
-
-            var btnOk = new Button { Text = "OK", Left = 100, Top = 85, Width = 80, DialogResult = DialogResult.OK };
-            var btnCancel = new Button { Text = "Cancel", Left = 200, Top = 85, Width = 80, DialogResult = DialogResult.Cancel };
+            var lbl = new Label { Text = prompt, Left = 12, Top = 12, Width = 360 };
+            var txt = new TextBox { Text = defaultValue, Left = 12, Top = 40, Width = 360 };
+            var btnOk = new Button { Text = "OK", Left = 100, Top = 75, Width = 80, DialogResult = DialogResult.OK };
+            var btnCancel = new Button { Text = "Cancel", Left = 200, Top = 75, Width = 80, DialogResult = DialogResult.Cancel };
             form.AcceptButton = btnOk;
             form.CancelButton = btnCancel;
-
-            form.Controls.Add(lbl);
-            form.Controls.Add(txt);
-            form.Controls.Add(btnOk);
-            form.Controls.Add(btnCancel);
+            form.Controls.AddRange(new Control[] { lbl, txt, btnOk, btnCancel });
 
             return form.ShowDialog() == DialogResult.OK ? txt.Text.Trim() : null;
         }

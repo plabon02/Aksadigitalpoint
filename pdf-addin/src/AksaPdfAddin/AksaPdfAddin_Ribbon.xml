@@ -4,33 +4,67 @@
     <tabs>
       <tab id="tabPdfAksa" label="AKSA PDF Tools" insertAfterMso="TabHome">
 
-        <!-- ===== CONVERT GROUP ===== -->
+        <!-- ===== FILE ===== -->
+        <group id="grpFile" label="File">
+          <button id="btnOpenPdf" size="large" label="Open PDF" onAction="OnOpenPdf" getImage="GetImage" screentip="Open PDF" supertip="Open a PDF file in the default PDF viewer" />
+        </group>
+
+        <!-- ===== CONVERT ===== -->
         <group id="grpConvert" label="Convert">
-          <button id="btnWordToPdf" size="large" label="Word→PDF" onAction="OnWordToPdf" tag="word2pdf" getImage="GetImage" screentip="Word to PDF" supertip="Save current document as PDF" />
-          <button id="btnPdfToWord" size="large" label="PDF→Word" onAction="OnPdfToWord" tag="pdf2word" getImage="GetImage" screentip="PDF to Word" supertip="Open a PDF file and convert it to Word document" />
-          <menu id="mnuBatchConvert" size="large" label="Batch" tag="batch" getImage="GetImage" screentip="Batch Convert" supertip="Convert multiple files at once">
-            <button id="btnBatchWordToPdf" label="Word Files → PDF" tag="batch_w2p" getImage="GetImage" onAction="OnBatchWordToPdf" />
-            <button id="btnBatchPdfToWord" label="PDF Files → Word" tag="batch_p2w" getImage="GetImage" onAction="OnBatchPdfToWord" />
+          <button id="btnWordToPdf" size="large" label="Word→PDF" onAction="OnWordToPdf" getImage="GetImage" screentip="Word to PDF" supertip="Save current document as PDF" />
+          <button id="btnPdfToWord" size="large" label="PDF→Word" onAction="OnPdfToWord" getImage="GetImage" screentip="PDF to Word" supertip="Open a PDF file and convert it to Word document" />
+          <menu id="mnuConvertMore" size="large" label="More" getImage="GetImage" screentip="More Convert Options" supertip="Convert PDF to other formats">
+            <button id="btnPdfToExcel" label="PDF → Excel" onAction="OnPdfToExcel" getImage="GetImage" />
+            <button id="btnPdfToPpt" label="PDF → PowerPoint" onAction="OnPdfToPpt" getImage="GetImage" />
+            <button id="btnPdfToJpg" label="PDF → JPG" onAction="OnPdfToJpg" getImage="GetImage" />
+            <menuSeparator />
+            <button id="btnBatchWordToPdf" label="Batch Word → PDF" onAction="OnBatchWordToPdf" getImage="GetImage" />
+            <button id="btnBatchPdfToWord" label="Batch PDF → Word" onAction="OnBatchPdfToWord" getImage="GetImage" />
           </menu>
         </group>
 
-        <!-- ===== MERGE / SPLIT GROUP ===== -->
-        <group id="grpMergeSplit" label="Merge &amp; Split">
-          <button id="btnMergePdf" size="large" label="Merge" onAction="OnMergePdf" tag="merge_pdf" getImage="GetImage" screentip="Merge PDF" supertip="Combine multiple PDF files into one" />
-          <button id="btnSplitPdf" size="large" label="Split" onAction="OnSplitPdf" tag="split_pdf" getImage="GetImage" screentip="Split PDF" supertip="Split a PDF file into separate pages" />
-          <button id="btnExtractPages" size="large" label="Extract" onAction="OnExtractPages" tag="extract_pdf" getImage="GetImage" screentip="Extract Pages" supertip="Extract specific pages from a PDF" />
+        <!-- ===== ORGANIZE ===== -->
+        <group id="grpOrganize" label="Organize">
+          <button id="btnMergePdf" size="large" label="Merge" onAction="OnMergePdf" getImage="GetImage" screentip="Merge PDF" supertip="Combine multiple PDF files into one" />
+          <button id="btnSplitPdf" size="large" label="Split" onAction="OnSplitPdf" getImage="GetImage" screentip="Split PDF" supertip="Split a PDF file into separate pages" />
+          <menu id="mnuOrganizeMore" size="large" label="More" getImage="GetImage" screentip="More Organize Options" supertip="Reorganize, scan, or remove pages">
+            <button id="btnOrganizePages" label="Organize Pages" onAction="OnOrganizePages" getImage="GetImage" />
+            <button id="btnRemovePage" label="Remove Page" onAction="OnRemovePage" getImage="GetImage" />
+            <button id="btnExtractPages" label="Extract Pages" onAction="OnExtractPages" getImage="GetImage" />
+            <menuSeparator />
+            <button id="btnScanToPdf" label="Scan → PDF" onAction="OnScanToPdf" getImage="GetImage" />
+          </menu>
         </group>
 
-        <!-- ===== PROTECT GROUP ===== -->
-        <group id="grpProtect" label="Protect">
-          <button id="btnProtectPdf" size="large" label="Protect" onAction="OnProtectPdf" tag="protect_pdf" getImage="GetImage" screentip="Protect PDF" supertip="Add password protection to a PDF file" />
-          <button id="btnUnlockPdf" size="large" label="Unlock" onAction="OnUnlockPdf" tag="unlock_pdf" getImage="GetImage" screentip="Unlock PDF" supertip="Remove password protection from a PDF" />
+        <!-- ===== OPTIMIZE ===== -->
+        <group id="grpOptimize" label="Optimize">
+          <button id="btnCompressPdf" size="large" label="Compress" onAction="OnCompressPdf" getImage="GetImage" screentip="Compress PDF" supertip="Reduce PDF file size" />
+          <button id="btnOcrPdf" size="large" label="OCR" onAction="OnOcrPdf" getImage="GetImage" screentip="OCR PDF" supertip="Recognize text in scanned PDF using OCR" />
         </group>
 
-        <!-- ===== INFO GROUP ===== -->
-        <group id="grpInfo" label="Info">
-          <button id="btnPdfInfo" size="large" label="Info" onAction="OnPdfInfo" tag="pdf_info" getImage="GetImage" screentip="PDF Info" supertip="Show PDF file properties (pages, size, encryption)" />
-          <button id="btnAboutPdf" size="large" label="About" onAction="OnAbout" tag="about_pdf" getImage="GetImage" screentip="About" supertip="About AKSA PDF Tools" />
+        <!-- ===== EDIT ===== -->
+        <group id="grpEdit" label="Edit">
+          <menu id="mnuEdit" size="large" label="Edit" getImage="GetImage" screentip="Edit PDF" supertip="Edit PDF content, watermark, rotate, crop and more">
+            <button id="btnEditPdf" label="Edit Text" onAction="OnEditPdf" getImage="GetImage" />
+            <button id="btnWatermark" label="Watermark" onAction="OnWatermark" getImage="GetImage" />
+            <button id="btnRotatePdf" label="Rotate Pages" onAction="OnRotatePdf" getImage="GetImage" />
+            <button id="btnPageNumber" label="Page Number" onAction="OnPageNumber" getImage="GetImage" />
+            <button id="btnCropPdf" label="Crop Pages" onAction="OnCropPdf" getImage="GetImage" />
+            <button id="btnPdfForms" label="Forms" onAction="OnPdfForms" getImage="GetImage" />
+          </menu>
+        </group>
+
+        <!-- ===== SECURITY ===== -->
+        <group id="grpSecurity" label="Security">
+          <button id="btnProtectPdf" size="large" label="Protect" onAction="OnProtectPdf" getImage="GetImage" screentip="Protect PDF" supertip="Add password protection to a PDF file" />
+          <button id="btnUnlockPdf" size="large" label="Unlock" onAction="OnUnlockPdf" getImage="GetImage" screentip="Unlock PDF" supertip="Remove password protection from a PDF" />
+          <button id="btnSignPdf" size="large" label="Sign" onAction="OnSignPdf" getImage="GetImage" screentip="Sign PDF" supertip="Add a digital signature or handwritten signature to PDF" />
+        </group>
+
+        <!-- ===== INTELLIGENCE ===== -->
+        <group id="grpIntelligence" label="Intelligence">
+          <button id="btnAiSummarize" size="large" label="Summarize" onAction="OnAiSummarize" getImage="GetImage" screentip="AI Summarize" supertip="Summarize PDF content using AI" />
+          <button id="btnTranslate" size="large" label="Translate" onAction="OnTranslate" getImage="GetImage" screentip="Translate PDF" supertip="Translate PDF content to another language using AI" />
         </group>
 
       </tab>
