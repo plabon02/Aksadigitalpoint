@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="css/style.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script>if(typeof pdfLib==='undefined'){document.write('<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"><\/script>');}</script>
+    <script>if(typeof pdfLib==='undefined'){document.write('<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"><\/script>');}</script>
     <style>
         .ptool { padding: 96px 0; }
         .ptool h2.section-title { margin-bottom: 8px; }
@@ -364,10 +366,12 @@
 <div id="toast-container"></div>
 
 <script src="js/script.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script>
 // ========== CHECK PDF-LIB ==========
-if(typeof pdfLib==='undefined'){ document.body.innerHTML='<div style="text-align:center;padding:80px 20px;font-family:sans-serif;"><h2>Failed to load PDF library</h2><p>Please check your internet connection and try again.</p></div>'; throw new Error('pdfLib not loaded'); }
+if(typeof pdfLib==='undefined'){
+    document.body.innerHTML='<div style="text-align:center;padding:80px 20px;font-family:sans-serif;"><h2>Failed to load PDF library</h2><p>Please check your internet connection or try disabling ad-blocker, then refresh the page.</p><br><button onclick="location.reload()" style="padding:10px 24px;border-radius:6px;border:none;background:linear-gradient(135deg,#f70178,#a0089c);color:#fff;cursor:pointer;font-weight:600;">Retry</button></div>';
+    throw new Error('pdfLib not loaded');
+}
 // ========== TOOL TABS ==========
 (function(){
     var tabs = document.querySelectorAll('.ptool-tab');
