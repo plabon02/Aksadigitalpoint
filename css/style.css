@@ -352,7 +352,21 @@ section:not(.hero) { padding: 96px 0; }
     border-radius: 50px;
 }
 
-.product-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.product-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+.version-select {
+    padding: 8px 12px;
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-family: inherit;
+    background: var(--white);
+    color: var(--font-light);
+    cursor: pointer;
+    outline: none;
+    transition: 0.3s;
+}
+.version-select:focus { border-color: var(--main-color); }
 
 .btn-download {
     background: var(--gradient-primary);
