@@ -148,11 +148,20 @@
             <button class="ptool-tab active" data-tab="merge"><i class='bx bx-layer'></i> Merge</button>
             <button class="ptool-tab" data-tab="split"><i class='bx bx-cut'></i> Split</button>
             <button class="ptool-tab" data-tab="extract"><i class='bx bx-copy-alt'></i> Extract</button>
+            <button class="ptool-tab" data-tab="delete"><i class='bx bx-trash'></i> Delete</button>
+            <button class="ptool-tab" data-tab="reorder"><i class='bx bx-sort'></i> Reorder</button>
             <button class="ptool-tab" data-tab="rotate"><i class='bx bx-rotate-right'></i> Rotate</button>
+            <button class="ptool-tab" data-tab="crop"><i class='bx bx-crop'></i> Crop</button>
+            <button class="ptool-tab" data-tab="resize"><i class='bx bx-expand'></i> Resize</button>
+            <button class="ptool-tab" data-tab="nup"><i class='bx bx-grid-alt'></i> N-up</button>
             <button class="ptool-tab" data-tab="info"><i class='bx bx-info-circle'></i> Info</button>
             <button class="ptool-tab" data-tab="view"><i class='bx bx-show'></i> View</button>
             <button class="ptool-tab" data-tab="convert"><i class='bx bx-transfer-alt'></i> Convert</button>
             <button class="ptool-tab" data-tab="edit"><i class='bx bx-edit-alt'></i> Edit</button>
+            <button class="ptool-tab" data-tab="overlay"><i class='bx bx-layers'></i> Overlay</button>
+            <button class="ptool-tab" data-tab="sign"><i class='bx bx-pen'></i> Sign</button>
+            <button class="ptool-tab" data-tab="extracttext"><i class='bx bx-text'></i> Extract Text</button>
+            <button class="ptool-tab" data-tab="invert"><i class='bx bx-palette'></i> Invert</button>
         </div>
 
         <!-- MERGE -->
@@ -284,6 +293,7 @@
                 <div class="ptool-tabs" style="margin-bottom:16px;">
                     <button class="ptool-tab active" data-subtab="img2pdf" style="font-size:12px;padding:6px 16px;">Images → PDF</button>
                     <button class="ptool-tab" data-subtab="text2pdf" style="font-size:12px;padding:6px 16px;">Text → PDF</button>
+                    <button class="ptool-tab" data-subtab="pdf2img" style="font-size:12px;padding:6px 16px;">PDF → Images</button>
                 </div>
 
                 <div id="sub-img2pdf">
@@ -311,6 +321,33 @@
                     </div>
                 </div>
 
+                </div>
+
+                <div id="sub-pdf2img" style="display:none;">
+                    <div class="drop-zone" id="p2iDrop"><i class='bx bx-image'></i><p>Drop a PDF file here or click to select</p></div>
+                    <div class="file-list" id="p2iFiles"></div>
+                    <div style="display:flex;gap:12px;margin-bottom:12px;">
+                        <div><label style="font-size:12px;display:block;margin-bottom:4px;">Format:</label>
+                            <select id="p2iFormat" class="ptool-input" style="max-width:120px;margin:0;">
+                                <option value="png">PNG</option>
+                                <option value="jpeg">JPG</option>
+                            </select>
+                        </div>
+                        <div><label style="font-size:12px;display:block;margin-bottom:4px;">Scale:</label>
+                            <select id="p2iScale" class="ptool-input" style="max-width:100px;margin:0;">
+                                <option value="1">1x</option>
+                                <option value="1.5" selected>1.5x</option>
+                                <option value="2">2x</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="ptool-actions">
+                        <button class="btn-process" id="p2iBtn" disabled><i class='bx bx-image'></i> Extract Images</button>
+                        <button class="btn-reset" id="p2iReset"><i class='bx bx-reset'></i> Clear</button>
+                    </div>
+                    <div id="p2iOutput" style="margin-top:12px;display:none;"></div>
+                </div>
+
                 <div class="ptool-status" id="convertStatus"></div>
             </div>
         </div>
@@ -319,11 +356,14 @@
         <div class="ptool-panel" id="panel-edit">
             <div class="ptool-box">
                 <h3>Edit PDF</h3>
-                <p class="desc">Add page numbers or watermarks to your PDF.</p>
+                <p class="desc">Add page numbers, watermarks, sign, header/footer, redact, or edit metadata.</p>
 
                 <div class="ptool-tabs" style="margin-bottom:16px;">
                     <button class="ptool-tab active" data-subtab="pageNum" style="font-size:12px;padding:6px 16px;">Page Numbers</button>
                     <button class="ptool-tab" data-subtab="watermark" style="font-size:12px;padding:6px 16px;">Watermark</button>
+                    <button class="ptool-tab" data-subtab="hdrftr" style="font-size:12px;padding:6px 16px;">Hdr/Ftr</button>
+                    <button class="ptool-tab" data-subtab="redact" style="font-size:12px;padding:6px 16px;">Redact</button>
+                    <button class="ptool-tab" data-subtab="metadata" style="font-size:12px;padding:6px 16px;">Metadata</button>
                 </div>
 
                 <div id="sub-pageNum">
@@ -376,9 +416,244 @@
                     </div>
                 </div>
 
+                <div id="sub-hdrftr" style="display:none;">
+                    <div class="drop-zone" id="hfDrop"><i class='bx bx-cloud-upload'></i><p>Drop a PDF file here or click to select</p></div>
+                    <div class="file-list" id="hfFiles"></div>
+                    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
+                        <div style="flex:1;"><label style="font-size:12px;display:block;margin-bottom:4px;">Header text:</label><input id="hfHeader" class="ptool-input" placeholder="Header" style="margin:0;"></div>
+                        <div style="flex:1;"><label style="font-size:12px;display:block;margin-bottom:4px;">Footer text:</label><input id="hfFooter" class="ptool-input" placeholder="Footer" style="margin:0;"></div>
+                    </div>
+                    <div class="ptool-actions">
+                        <button class="btn-process" id="hfBtn" disabled><i class='bx bx-heading'></i> Add Header/Footer</button>
+                        <button class="btn-reset" id="hfReset"><i class='bx bx-reset'></i> Clear</button>
+                    </div>
+                </div>
+
+                <div id="sub-redact" style="display:none;">
+                    <div class="drop-zone" id="redactDrop"><i class='bx bx-cloud-upload'></i><p>Drop a PDF file here or click to select</p></div>
+                    <div class="file-list" id="redactFiles"></div>
+                    <div style="margin-bottom:12px;">
+                        <label style="font-size:12px;display:block;margin-bottom:4px;">Text to black-out (comma separated):</label>
+                        <input id="redactWords" class="ptool-input" placeholder="e.g. confidential, secret, 1234-5678" style="margin:0;">
+                    </div>
+                    <div class="ptool-actions">
+                        <button class="btn-process" id="redactBtn" disabled><i class='bx bx-hide'></i> Redact</button>
+                        <button class="btn-reset" id="redactReset"><i class='bx bx-reset'></i> Clear</button>
+                    </div>
+                </div>
+
+                <div id="sub-metadata" style="display:none;">
+                    <div class="drop-zone" id="metaDrop"><i class='bx bx-cloud-upload'></i><p>Drop a PDF file here or click to select</p></div>
+                    <div class="file-list" id="metaFiles"></div>
+                    <div style="margin-bottom:12px;">
+                        <div><label style="font-size:12px;display:block;margin-bottom:4px;">Title:</label><input id="metaTitle" class="ptool-input" style="margin:0;"></div>
+                        <div><label style="font-size:12px;display:block;margin-bottom:4px;">Author:</label><input id="metaAuthor" class="ptool-input" style="margin:0;"></div>
+                        <div><label style="font-size:12px;display:block;margin-bottom:4px;">Subject:</label><input id="metaSubject" class="ptool-input" style="margin:0;"></div>
+                    </div>
+                    <div class="ptool-actions">
+                        <button class="btn-process" id="metaBtn" disabled><i class='bx bx-info-circle'></i> Update Metadata</button>
+                        <button class="btn-reset" id="metaReset"><i class='bx bx-reset'></i> Clear</button>
+                    </div>
+                </div>
+
                 <div class="ptool-status" id="editStatus"></div>
             </div>
         </div>
+
+        <!-- DELETE PAGES -->
+        <div class="ptool-panel" id="panel-delete">
+            <div class="ptool-box">
+                <h3>Delete Pages</h3>
+                <p class="desc">Remove specific pages from a PDF.</p>
+                <div class="drop-zone" id="deleteDrop"><i class='bx bx-cloud-upload'></i><p>Drop a PDF file here or click to select</p></div>
+                <div class="file-list" id="deleteFiles"></div>
+                <div id="deletePages" style="margin-bottom:12px;">
+                    <label style="font-size:13px;font-weight:500;display:block;margin-bottom:6px;">Pages to delete (e.g. 1,3,5-8):</label>
+                    <input id="deleteInput" class="ptool-input" placeholder="2,4,6-9" style="margin:0;">
+                </div>
+                <div class="ptool-actions">
+                    <button class="btn-process" id="deleteBtn" disabled><i class='bx bx-trash'></i> Delete Pages</button>
+                    <button class="btn-reset" id="deleteReset"><i class='bx bx-reset'></i> Clear</button>
+                </div>
+                <div class="ptool-status" id="deleteStatus"></div>
+            </div>
+        </div>
+
+        <!-- REORDER -->
+        <div class="ptool-panel" id="panel-reorder">
+            <div class="ptool-box">
+                <h3>Reorder Pages</h3>
+                <p class="desc">Arrange pages in a new order.</p>
+                <div class="drop-zone" id="reorderDrop"><i class='bx bx-cloud-upload'></i><p>Drop a PDF file here or click to select</p></div>
+                <div class="file-list" id="reorderFiles"></div>
+                <div id="reorderList" style="margin:12px 0;"></div>
+                <div class="ptool-actions">
+                    <button class="btn-process" id="reorderBtn" disabled><i class='bx bx-sort'></i> Save Order</button>
+                    <button class="btn-reset" id="reorderReset"><i class='bx bx-reset'></i> Clear</button>
+                </div>
+                <div class="ptool-status" id="reorderStatus"></div>
+            </div>
+        </div>
+
+        <!-- CROP -->
+        <div class="ptool-panel" id="panel-crop">
+            <div class="ptool-box">
+                <h3>Crop Pages</h3>
+                <p class="desc">Crop margins of every page.</p>
+                <div class="drop-zone" id="cropDrop"><i class='bx bx-cloud-upload'></i><p>Drop a PDF file here or click to select</p></div>
+                <div class="file-list" id="cropFiles"></div>
+                <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
+                    <div><label style="font-size:12px;display:block;margin-bottom:4px;">Top (pt):</label><input id="cropTop" class="ptool-input" type="number" value="0" min="0" style="max-width:80px;margin:0;"></div>
+                    <div><label style="font-size:12px;display:block;margin-bottom:4px;">Bottom (pt):</label><input id="cropBottom" class="ptool-input" type="number" value="0" min="0" style="max-width:80px;margin:0;"></div>
+                    <div><label style="font-size:12px;display:block;margin-bottom:4px;">Left (pt):</label><input id="cropLeft" class="ptool-input" type="number" value="0" min="0" style="max-width:80px;margin:0;"></div>
+                    <div><label style="font-size:12px;display:block;margin-bottom:4px;">Right (pt):</label><input id="cropRight" class="ptool-input" type="number" value="0" min="0" style="max-width:80px;margin:0;"></div>
+                </div>
+                <div class="ptool-actions">
+                    <button class="btn-process" id="cropBtn" disabled><i class='bx bx-crop'></i> Crop Pages</button>
+                    <button class="btn-reset" id="cropReset"><i class='bx bx-reset'></i> Clear</button>
+                </div>
+                <div class="ptool-status" id="cropStatus"></div>
+            </div>
+        </div>
+
+        <!-- RESIZE -->
+        <div class="ptool-panel" id="panel-resize">
+            <div class="ptool-box">
+                <h3>Resize / Scale</h3>
+                <p class="desc">Change page size and scale content to fit.</p>
+                <div class="drop-zone" id="resizeDrop"><i class='bx bx-cloud-upload'></i><p>Drop a PDF file here or click to select</p></div>
+                <div class="file-list" id="resizeFiles"></div>
+                <div style="margin-bottom:12px;">
+                    <label style="font-size:13px;font-weight:500;display:block;margin-bottom:6px;">Target page size:</label>
+                    <select id="resizeSize" class="ptool-input" style="max-width:200px;margin:0;">
+                        <option value="A4">A4 (210 × 297 mm)</option>
+                        <option value="Letter">Letter (8.5 × 11 in)</option>
+                        <option value="Legal">Legal (8.5 × 14 in)</option>
+                        <option value="A3">A3 (297 × 420 mm)</option>
+                        <option value="A5">A5 (148 × 210 mm)</option>
+                    </select>
+                </div>
+                <div class="ptool-actions">
+                    <button class="btn-process" id="resizeBtn" disabled><i class='bx bx-expand'></i> Resize</button>
+                    <button class="btn-reset" id="resizeReset"><i class='bx bx-reset'></i> Clear</button>
+                </div>
+                <div class="ptool-status" id="resizeStatus"></div>
+            </div>
+        </div>
+
+        <!-- N-UP -->
+        <div class="ptool-panel" id="panel-nup">
+            <div class="ptool-box">
+                <h3>N-up Layout</h3>
+                <p class="desc">Place multiple PDF pages onto one sheet.</p>
+                <div class="drop-zone" id="nupDrop"><i class='bx bx-cloud-upload'></i><p>Drop a PDF file here or click to select</p></div>
+                <div class="file-list" id="nupFiles"></div>
+                <div style="margin-bottom:12px;">
+                    <label style="font-size:13px;font-weight:500;display:block;margin-bottom:6px;">Pages per sheet:</label>
+                    <select id="nupCount" class="ptool-input" style="max-width:150px;margin:0;">
+                        <option value="2">2-up</option>
+                        <option value="4" selected>4-up</option>
+                        <option value="6">6-up</option>
+                        <option value="8">8-up</option>
+                    </select>
+                </div>
+                <div class="ptool-actions">
+                    <button class="btn-process" id="nupBtn" disabled><i class='bx bx-grid-alt'></i> Create Layout</button>
+                    <button class="btn-reset" id="nupReset"><i class='bx bx-reset'></i> Clear</button>
+                </div>
+                <div class="ptool-status" id="nupStatus"></div>
+            </div>
+        </div>
+
+        <!-- OVERLAY -->
+        <div class="ptool-panel" id="panel-overlay">
+            <div class="ptool-box">
+                <h3>Overlay PDFs</h3>
+                <p class="desc">Layer one PDF on top of another (e.g. add letterhead).</p>
+                <div style="margin-bottom:12px;">
+                    <label style="font-size:12px;font-weight:500;">Base PDF (bottom layer):</label>
+                    <div class="drop-zone" id="overlayBaseDrop" style="padding:20px;"><i class='bx bx-file'></i><p>Drop base PDF</p></div>
+                    <div class="file-list" id="overlayBaseFiles"></div>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <label style="font-size:12px;font-weight:500;">Overlay PDF (top layer):</label>
+                    <div class="drop-zone" id="overlayTopDrop" style="padding:20px;"><i class='bx bx-file'></i><p>Drop overlay PDF</p></div>
+                    <div class="file-list" id="overlayTopFiles"></div>
+                </div>
+                <div class="ptool-actions">
+                    <button class="btn-process" id="overlayBtn" disabled><i class='bx bx-layers'></i> Overlay PDFs</button>
+                    <button class="btn-reset" id="overlayReset"><i class='bx bx-reset'></i> Clear</button>
+                </div>
+                <div class="ptool-status" id="overlayStatus"></div>
+            </div>
+        </div>
+
+        <!-- SIGN -->
+        <div class="ptool-panel" id="panel-sign">
+            <div class="ptool-box">
+                <h3>Add Signature</h3>
+                <p class="desc">Add a signature image to your PDF pages.</p>
+                <div class="drop-zone" id="signDrop"><i class='bx bx-cloud-upload'></i><p>Drop a PDF file here or click to select</p></div>
+                <div class="file-list" id="signFiles"></div>
+                <div style="margin-bottom:12px;">
+                    <label style="font-size:12px;display:block;margin-bottom:4px;">Signature Image (PNG with transparent bg works best):</label>
+                    <input id="signImage" class="ptool-input" type="file" accept="image/png,image/jpeg" style="margin:0;padding:8px;">
+                </div>
+                <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
+                    <div><label style="font-size:12px;display:block;margin-bottom:4px;">Position:</label>
+                        <select id="signPos" class="ptool-input" style="max-width:150px;margin:0;">
+                            <option value="br">Bottom Right</option>
+                            <option value="bl">Bottom Left</option>
+                            <option value="tr">Top Right</option>
+                            <option value="tl">Top Left</option>
+                        </select>
+                    </div>
+                    <div><label style="font-size:12px;display:block;margin-bottom:4px;">Scale (%):</label>
+                        <input id="signScale" class="ptool-input" type="number" value="30" min="5" max="100" style="max-width:80px;margin:0;">
+                    </div>
+                </div>
+                <div class="ptool-actions">
+                    <button class="btn-process" id="signBtn" disabled><i class='bx bx-pen'></i> Add Signature</button>
+                    <button class="btn-reset" id="signReset"><i class='bx bx-reset'></i> Clear</button>
+                </div>
+                <div class="ptool-status" id="signStatus"></div>
+            </div>
+        </div>
+
+        <!-- EXTRACT TEXT -->
+        <div class="ptool-panel" id="panel-extracttext">
+            <div class="ptool-box">
+                <h3>Extract Text</h3>
+                <p class="desc">Extract all text content from a PDF file.</p>
+                <div class="drop-zone" id="etDrop"><i class='bx bx-cloud-upload'></i><p>Drop a PDF file here or click to select</p></div>
+                <div class="file-list" id="etFiles"></div>
+                <div class="ptool-actions">
+                    <button class="btn-process" id="etBtn" disabled><i class='bx bx-text'></i> Extract Text</button>
+                    <button class="btn-reset" id="etReset"><i class='bx bx-reset'></i> Clear</button>
+                </div>
+                <div class="ptool-status" id="etStatus"></div>
+                <div id="etOutput" style="margin-top:12px;display:none;">
+                    <textarea class="ptool-input" id="etTextarea" rows="10" readonly style="font-family:monospace;font-size:12px;resize:vertical;"></textarea>
+                    <button class="btn-process" id="etCopyBtn" style="margin-top:6px;"><i class='bx bx-copy'></i> Copy Text</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- INVERT COLORS -->
+        <div class="ptool-panel" id="panel-invert">
+            <div class="ptool-box">
+                <h3>Invert Colors</h3>
+                <p class="desc">Create a negative / dark-mode version of your PDF.</p>
+                <div class="drop-zone" id="invertDrop"><i class='bx bx-cloud-upload'></i><p>Drop a PDF file here or click to select</p></div>
+                <div class="file-list" id="invertFiles"></div>
+                <div class="ptool-actions">
+                    <button class="btn-process" id="invertBtn" disabled><i class='bx bx-palette'></i> Invert Colors</button>
+                    <button class="btn-reset" id="invertReset"><i class='bx bx-reset'></i> Clear</button>
+                </div>
+                <div class="ptool-status" id="invertStatus"></div>
+            </div>
+        </div>
+
     </div>
 </section>
 
@@ -936,6 +1211,510 @@ document.querySelectorAll('.ptool-box .ptool-tabs').forEach(function(bar){
         btn.disabled=false;
     });
 })();
+
+// ========== DELETE PAGES ==========
+(function(){
+    var files=[]; var zone=document.getElementById('deleteDrop'); var list=document.getElementById('deleteFiles');
+    var btn=document.getElementById('deleteBtn'); var rst=document.getElementById('deleteReset');
+    var inp=document.getElementById('deleteInput'); var st=document.getElementById('deleteStatus');
+    setupDrop('deleteDrop','deleteFiles',function(f){ if(f.length) files=[f[0]]; render(); },false);
+    function render(){ list.innerHTML=fileListHtml(files,true); btn.disabled=files.length===0;
+        list.querySelectorAll('.remove').forEach(function(el){ el.addEventListener('click',function(){ files=[]; render(); }); }); }
+    rst.addEventListener('click',function(){ files=[]; render(); st.className='ptool-status'; });
+    btn.addEventListener('click',async function(){
+        if(!files.length) return; if(!inp.value.trim()){ setStatus(st,'Enter pages to delete.','error'); return; }
+        btn.disabled=true; setStatus(st,'Deleting pages...','info');
+        try{
+            var ranges=inp.value.split(',').map(function(s){ return s.trim(); });
+            var toDel=[];
+            for(var i=0;i<ranges.length;i++){
+                var m=ranges[i].match(/^(\d+)(?:-(\d+))?$/); if(!m){ setStatus(st,'Invalid range: '+ranges[i],'error'); btn.disabled=false; return; }
+                var a=parseInt(m[1])-1; var b=m[2]?parseInt(m[2])-1:a;
+                for(var j=Math.min(a,b);j<=Math.max(a,b);j++) toDel.push(j);
+            }
+            var buf=await readFile(files[0]); var pdf=await pdfLib.PDFDocument.load(buf);
+            var keep=[]; var total=pdf.getPageCount();
+            for(var i=0;i<total;i++) if(toDel.indexOf(i)===-1) keep.push(i);
+            if(keep.length===total){ setStatus(st,'No pages to delete.','error'); btn.disabled=false; return; }
+            var newPdf=await pdfLib.PDFDocument.create();
+            var pages=await newPdf.copyPages(pdf,keep);
+            pages.forEach(function(p){ newPdf.addPage(p); });
+            var out=await newPdf.save();
+            download(out,files[0].name.replace(/\.pdf$/i,'')+'_deleted.pdf');
+            setStatus(st,'Deleted '+(total-keep.length)+' page(s).','success');
+        }catch(e){ setStatus(st,'Error: '+e.message,'error'); }
+        btn.disabled=false;
+    });
+})();
+
+// ========== REORDER ==========
+(function(){
+    var files=[]; var order=[];
+    var zone=document.getElementById('reorderDrop'); var list=document.getElementById('reorderFiles');
+    var btn=document.getElementById('reorderBtn'); var rst=document.getElementById('reorderReset');
+    var rl=document.getElementById('reorderList'); var st=document.getElementById('reorderStatus');
+    setupDrop('reorderDrop','reorderFiles',function(f){ if(f.length) files=[f[0]]; loadPages(); },false);
+    async function loadPages(){
+        if(!files.length) return;
+        list.innerHTML=fileListHtml(files,true);
+        list.querySelectorAll('.remove').forEach(function(el){ el.addEventListener('click',function(){ files=[]; rl.innerHTML=''; order=[]; render(); }); });
+        try{
+            var buf=await readFile(files[0]); var pdf=await pdfLib.PDFDocument.load(buf);
+            var count=pdf.getPageCount(); order=[]; for(var i=0;i<count;i++) order.push(i);
+            renderOrder(); btn.disabled=false;
+        }catch(e){ rl.innerHTML='<p style="color:#d32f2f;font-size:13px;">'+e.message+'</p>'; }
+    }
+    function renderOrder(){
+        var h='<p style="font-size:12px;margin-bottom:8px;color:var(--font-color);">Drag or use buttons to reorder:</p>';
+        for(var i=0;i<order.length;i++){
+            h+='<div class="file-item" data-idx="'+i+'"><span class="name">Page '+(order[i]+1)+'</span>'+
+                '<span style="display:flex;gap:4px;">'+
+                (i>0?'<button class="btn-reset" data-move="up" style="padding:4px 10px;font-size:11px;"><i class="bx bx-chevron-up"></i></button>':'')+
+                (i<order.length-1?'<button class="btn-reset" data-move="down" style="padding:4px 10px;font-size:11px;"><i class="bx bx-chevron-down"></i></button>':'')+
+                '</span></div>';
+        }
+        rl.innerHTML=h;
+        rl.querySelectorAll('[data-move]').forEach(function(b){
+            b.addEventListener('click',function(){
+                var item=this.closest('.file-item'); var idx=parseInt(item.dataset.idx);
+                var dir=this.dataset.move; var newIdx=dir==='up'?idx-1:idx+1;
+                if(newIdx<0||newIdx>=order.length) return;
+                var tmp=order[idx]; order[idx]=order[newIdx]; order[newIdx]=tmp;
+                renderOrder();
+            });
+        });
+    }
+    rst.addEventListener('click',function(){ files=[]; rl.innerHTML=''; order=[]; render(); st.className='ptool-status'; });
+    function render(){ list.innerHTML=fileListHtml(files,true); btn.disabled=files.length===0;
+        list.querySelectorAll('.remove').forEach(function(el){ el.addEventListener('click',function(){ files=[]; rl.innerHTML=''; order=[]; render(); }); }); }
+    btn.addEventListener('click',async function(){
+        if(!files.length||!order.length) return;
+        btn.disabled=true; setStatus(st,'Reordering pages...','info');
+        try{
+            var buf=await readFile(files[0]); var pdf=await pdfLib.PDFDocument.load(buf);
+            var newPdf=await pdfLib.PDFDocument.create();
+            var pages=await newPdf.copyPages(pdf,order);
+            pages.forEach(function(p){ newPdf.addPage(p); });
+            var out=await newPdf.save();
+            download(out,files[0].name.replace(/\.pdf$/i,'')+'_reordered.pdf');
+            setStatus(st,'Pages reordered.','success');
+        }catch(e){ setStatus(st,'Error: '+e.message,'error'); }
+        btn.disabled=false;
+    });
+})();
+
+// ========== CROP ==========
+(function(){
+    var files=[]; var zone=document.getElementById('cropDrop'); var list=document.getElementById('cropFiles');
+    var btn=document.getElementById('cropBtn'); var rst=document.getElementById('cropReset');
+    var t=document.getElementById('cropTop'); var b=document.getElementById('cropBottom');
+    var l=document.getElementById('cropLeft'); var r=document.getElementById('cropRight');
+    var st=document.getElementById('cropStatus');
+    setupDrop('cropDrop','cropFiles',function(f){ if(f.length) files=[f[0]]; render(); },false);
+    function render(){ list.innerHTML=fileListHtml(files,true); btn.disabled=files.length===0;
+        list.querySelectorAll('.remove').forEach(function(el){ el.addEventListener('click',function(){ files=[]; render(); }); }); }
+    rst.addEventListener('click',function(){ files=[]; render(); st.className='ptool-status'; });
+    btn.addEventListener('click',async function(){
+        if(!files.length) return;
+        var ct=parseFloat(t.value)||0; var cb=parseFloat(b.value)||0;
+        var cl=parseFloat(l.value)||0; var cr=parseFloat(r.value)||0;
+        if(!ct&&!cb&&!cl&&!cr){ setStatus(st,'Enter at least one crop value.','error'); return; }
+        btn.disabled=true; setStatus(st,'Cropping pages...','info');
+        try{
+            var buf=await readFile(files[0]); var pdf=await pdfLib.PDFDocument.load(buf);
+            var idxs=pdf.getPageIndices();
+            for(var i=0;i<idxs.length;i++){
+                var page=pdf.getPage(idxs[i]);
+                var mb=page.getMediaBox(); var w=mb.width; var h=mb.height;
+                page.setMediaBox(cl, cb, w-cl-cr, h-ct-cb);
+            }
+            var out=await pdf.save();
+            download(out,files[0].name.replace(/\.pdf$/i,'')+'_cropped.pdf');
+            setStatus(st,'Cropped all pages.','success');
+        }catch(e){ setStatus(st,'Error: '+e.message,'error'); }
+        btn.disabled=false;
+    });
+})();
+
+// ========== RESIZE ==========
+(function(){
+    var files=[]; var pz={'A4':[595.28,841.89],'Letter':[612,792],'Legal':[612,1008],'A3':[841.89,1190.55],'A5':[420.94,595.28]};
+    var zone=document.getElementById('resizeDrop'); var list=document.getElementById('resizeFiles');
+    var btn=document.getElementById('resizeBtn'); var rst=document.getElementById('resizeReset');
+    var sel=document.getElementById('resizeSize'); var st=document.getElementById('resizeStatus');
+    setupDrop('resizeDrop','resizeFiles',function(f){ if(f.length) files=[f[0]]; render(); },false);
+    function render(){ list.innerHTML=fileListHtml(files,true); btn.disabled=files.length===0;
+        list.querySelectorAll('.remove').forEach(function(el){ el.addEventListener('click',function(){ files=[]; render(); }); }); }
+    rst.addEventListener('click',function(){ files=[]; render(); st.className='ptool-status'; });
+    btn.addEventListener('click',async function(){
+        if(!files.length) return; btn.disabled=true; setStatus(st,'Resizing...','info');
+        try{
+            var buf=await readFile(files[0]); var pdf=await pdfLib.PDFDocument.load(buf);
+            var target=pz[sel.value]; var idxs=pdf.getPageIndices();
+            var scaleX=target[0]/pdf.getPage(0).getWidth(); var scaleY=target[1]/pdf.getPage(0).getHeight();
+            var scale=Math.min(scaleX,scaleY);
+            for(var i=0;i<idxs.length;i++){
+                var page=pdf.getPage(idxs[i]); var w=page.getWidth(); var h=page.getHeight();
+                page.setSize(target[0],target[1]);
+                page.scaleContent(scale*w/target[0], scale*h/target[1]);
+            }
+            var out=await pdf.save();
+            download(out,files[0].name.replace(/\.pdf$/i,'')+'_resized.pdf');
+            setStatus(st,'Resized to '+sel.value+'.','success');
+        }catch(e){ setStatus(st,'Error: '+e.message,'error'); }
+        btn.disabled=false;
+    });
+})();
+
+// ========== N-UP ==========
+(function(){
+    var files=[]; var zone=document.getElementById('nupDrop'); var list=document.getElementById('nupFiles');
+    var btn=document.getElementById('nupBtn'); var rst=document.getElementById('nupReset');
+    var cnt=document.getElementById('nupCount'); var st=document.getElementById('nupStatus');
+    setupDrop('nupDrop','nupFiles',function(f){ if(f.length) files=[f[0]]; render(); },false);
+    function render(){ list.innerHTML=fileListHtml(files,true); btn.disabled=files.length===0;
+        list.querySelectorAll('.remove').forEach(function(el){ el.addEventListener('click',function(){ files=[]; render(); }); }); }
+    rst.addEventListener('click',function(){ files=[]; render(); st.className='ptool-status'; });
+    btn.addEventListener('click',async function(){
+        if(!files.length) return; btn.disabled=true; setStatus(st,'Creating N-up layout...','info');
+        try{
+            var buf=await readFile(files[0]); var pdf=await pdfLib.PDFDocument.load(buf);
+            var n=parseInt(cnt.value); var cols=n<=4?2:3; var rows=Math.ceil(n/cols);
+            var pw=612; var ph=792; var gap=10;
+            var cw=(pw-(cols+1)*gap)/cols; var ch=(ph-(rows+1)*gap)/rows;
+            var total=pdf.getPageCount(); var outPdf=await pdfLib.PDFDocument.create();
+            for(var s=0;s<total;s+=n){
+                var page=outPdf.addPage([pw,ph]);
+                for(var j=0;j<n&&s+j<total;j++){
+                    var src=pdf.getPage(s+j); var sw=src.getWidth(); var sh=src.getHeight();
+                    var scl=Math.min(cw/sw,ch/sh);
+                    var pw2=cw*scl/sw; var ph2=ch*scl/sh;
+                    var col=j%cols; var row=Math.floor(j/cols);
+                    var x=gap+col*(cw+gap)+(cw-cw*scl/sw)/2;
+                    var y=ph-(gap+row*(ch+gap)+ch);
+                    y+=(ch-ch*scl/sh)/2;
+                    var embed=await outPdf.embedPage(src,cw*scl/sw,ch*scl/sh);
+                    page.drawPage(embed,{x:x,y:y,width:cw*scl/sw,height:ch*scl/sh});
+                }
+            }
+            var out=await outPdf.save();
+            download(out,files[0].name.replace(/\.pdf$/i,'')+'_'+n+'up.pdf');
+            setStatus(st,'Created '+n+'-up layout.','success');
+        }catch(e){ setStatus(st,'Error: '+e.message,'error'); }
+        btn.disabled=false;
+    });
+})();
+
+// ========== OVERLAY ==========
+(function(){
+    var base=[]; var top=[];
+    var bDrop=document.getElementById('overlayBaseDrop'); var bList=document.getElementById('overlayBaseFiles');
+    var tDrop=document.getElementById('overlayTopDrop'); var tList=document.getElementById('overlayTopFiles');
+    var btn=document.getElementById('overlayBtn'); var rst=document.getElementById('overlayReset');
+    var st=document.getElementById('overlayStatus');
+    setupDropB('overlayBaseDrop','overlayBaseFiles',function(f){ if(f.length) base=[f[0]]; renderB(); },false);
+    setupDropB('overlayTopDrop','overlayTopFiles',function(f){ if(f.length) top=[f[0]]; renderT(); },false);
+    function setupDropB(id,listId,handler,multi){
+        var zone=document.getElementById(id); var input=document.createElement('input');
+        input.type='file'; input.accept='.pdf'; input.multiple=multi;
+        zone.appendChild(input); zone.addEventListener('click',function(){ input.click(); });
+        zone.addEventListener('dragover',function(e){ e.preventDefault(); zone.classList.add('dragover'); });
+        zone.addEventListener('dragleave',function(){ zone.classList.remove('dragover'); });
+        zone.addEventListener('drop',function(e){ e.preventDefault(); zone.classList.remove('dragover'); handler(e.dataTransfer.files); });
+        input.addEventListener('change',function(){ handler(input.files); input.value=''; });
+    }
+    function renderB(){ bList.innerHTML=fileListHtml(base,false); updateBtn(); }
+    function renderT(){ tList.innerHTML=fileListHtml(top,false); updateBtn(); }
+    function updateBtn(){ btn.disabled=!(base.length&&top.length); }
+    rst.addEventListener('click',function(){ base=[]; top=[]; renderB(); renderT(); st.className='ptool-status'; });
+    btn.addEventListener('click',async function(){
+        if(!base.length||!top.length) return;
+        btn.disabled=true; setStatus(st,'Overlaying PDFs...','info');
+        try{
+            var bBuf=await readFile(base[0]); var bPdf=await pdfLib.PDFDocument.load(bBuf);
+            var tBuf=await readFile(top[0]); var tPdf=await pdfLib.PDFDocument.load(tBuf);
+            var outPdf=await pdfLib.PDFDocument.create();
+            var count=Math.max(bPdf.getPageCount(),tPdf.getPageCount());
+            for(var i=0;i<count;i++){
+                var page=outPdf.addPage([612,792]);
+                if(i<bPdf.getPageCount()){
+                    var bPage=await outPdf.embedPage(bPdf.getPage(i));
+                    page.drawPage(bPage,{x:0,y:0,width:612,height:792});
+                }
+                if(i<tPdf.getPageCount()){
+                    var tPage=await outPdf.embedPage(tPdf.getPage(i));
+                    page.drawPage(tPage,{x:0,y:0,width:612,height:792});
+                }
+            }
+            var out=await outPdf.save();
+            download(out,'overlayed.pdf');
+            setStatus(st,'PDFs overlayed successfully.','success');
+        }catch(e){ setStatus(st,'Error: '+e.message,'error'); }
+        btn.disabled=false;
+    });
+})();
+
+// ========== SIGN ==========
+(function(){
+    var files=[]; var sigFile=null;
+    var zone=document.getElementById('signDrop'); var list=document.getElementById('signFiles');
+    var btn=document.getElementById('signBtn'); var rst=document.getElementById('signReset');
+    var sig=document.getElementById('signImage'); var pos=document.getElementById('signPos');
+    var scl=document.getElementById('signScale'); var st=document.getElementById('signStatus');
+    setupDrop('signDrop','signFiles',function(f){ if(f.length) files=[f[0]]; render(); },false);
+    function render(){ list.innerHTML=fileListHtml(files,true); btn.disabled=!(files.length&&sigFile);
+        list.querySelectorAll('.remove').forEach(function(el){ el.addEventListener('click',function(){ files=[]; render(); }); }); }
+    sig.addEventListener('change',function(){ sigFile=sig.files[0]||null; render(); });
+    rst.addEventListener('click',function(){ files=[]; sigFile=null; sig.value=''; render(); st.className='ptool-status'; });
+    btn.addEventListener('click',async function(){
+        if(!files.length||!sigFile) return;
+        btn.disabled=true; setStatus(st,'Adding signature...','info');
+        try{
+            var buf=await readFile(files[0]); var pdf=await pdfLib.PDFDocument.load(buf);
+            var sBuf=await readFile(sigFile); var img;
+            if(sigFile.type==='image/png') img=await pdf.embedPng(sBuf); else img=await pdf.embedJpg(sBuf);
+            var scale=parseInt(scl.value)/100; var iw=img.width*scale; var ih=img.height*scale;
+            var idxs=pdf.getPageIndices();
+            for(var i=0;i<idxs.length;i++){
+                var page=pdf.getPage(idxs[i]); var w=page.getWidth(); var h=page.getHeight();
+                var x,y;
+                switch(pos.value){
+                    case 'br': x=w-iw-30; y=30; break;
+                    case 'bl': x=30; y=30; break;
+                    case 'tr': x=w-iw-30; y=h-ih-30; break;
+                    case 'tl': x=30; y=h-ih-30; break;
+                }
+                page.drawImage(img,{x:x,y:y,width:iw,height:ih});
+            }
+            var out=await pdf.save();
+            download(out,files[0].name.replace(/\.pdf$/i,'')+'_signed.pdf');
+            setStatus(st,'Signature added to all pages.','success');
+        }catch(e){ setStatus(st,'Error: '+e.message,'error'); }
+        btn.disabled=false;
+    });
+})();
+
+// ========== HEADER/FOOTER (Edit sub-tab) ==========
+(function(){
+    var files=[];
+    var zone=document.getElementById('hfDrop'); var list=document.getElementById('hfFiles');
+    var btn=document.getElementById('hfBtn'); var rst=document.getElementById('hfReset');
+    var hdr=document.getElementById('hfHeader'); var ftr=document.getElementById('hfFooter');
+    var st=document.getElementById('editStatus');
+    setupDrop('hfDrop','hfFiles',function(f){ if(f.length) files=[f[0]]; render(); },false);
+    function render(){ list.innerHTML=fileListHtml(files,true); btn.disabled=files.length===0;
+        list.querySelectorAll('.remove').forEach(function(el){ el.addEventListener('click',function(){ files=[]; render(); }); }); }
+    rst.addEventListener('click',function(){ files=[]; render(); st.className='ptool-status'; });
+    btn.addEventListener('click',async function(){
+        if(!files.length) return;
+        if(!hdr.value.trim()&&!ftr.value.trim()){ setStatus(st,'Enter header or footer text.','error'); return; }
+        btn.disabled=true; setStatus(st,'Adding header/footer...','info');
+        try{
+            var buf=await readFile(files[0]); var pdf=await pdfLib.PDFDocument.load(buf);
+            var font=await pdf.embedFont(pdfLib.StandardFonts.Helvetica);
+            var idxs=pdf.getPageIndices();
+            for(var i=0;i<idxs.length;i++){
+                var page=pdf.getPage(idxs[i]); var w=page.getWidth(); var h=page.getHeight();
+                if(hdr.value.trim()) page.drawText(hdr.value,{x:w/2-20,y:h-30,size:10,font:font,color:pdfLib.rgb(0.4,0.4,0.4)});
+                if(ftr.value.trim()) page.drawText(ftr.value,{x:w/2-20,y:20,size:10,font:font,color:pdfLib.rgb(0.4,0.4,0.4)});
+            }
+            var out=await pdf.save();
+            download(out,files[0].name.replace(/\.pdf$/i,'')+'_hdrftr.pdf');
+            setStatus(st,'Header/footer added.','success');
+        }catch(e){ setStatus(st,'Error: '+e.message,'error'); }
+        btn.disabled=false;
+    });
+})();
+
+// ========== REDACT (Edit sub-tab) ==========
+(function(){
+    var files=[];
+    var zone=document.getElementById('redactDrop'); var list=document.getElementById('redactFiles');
+    var btn=document.getElementById('redactBtn'); var rst=document.getElementById('redactReset');
+    var words=document.getElementById('redactWords'); var st=document.getElementById('editStatus');
+    setupDrop('redactDrop','redactFiles',function(f){ if(f.length) files=[f[0]]; render(); },false);
+    function render(){ list.innerHTML=fileListHtml(files,true); btn.disabled=files.length===0;
+        list.querySelectorAll('.remove').forEach(function(el){ el.addEventListener('click',function(){ files=[]; render(); }); }); }
+    rst.addEventListener('click',function(){ files=[]; render(); st.className='ptool-status'; });
+    btn.addEventListener('click',async function(){
+        if(!files.length) return;
+        if(!words.value.trim()){ setStatus(st,'Enter words to redact.','error'); return; }
+        btn.disabled=true; setStatus(st,'Redacting...','info');
+        try{
+            var buf=await readFile(files[0]); var pdf=await pdfLib.PDFDocument.load(buf);
+            var idxs=pdf.getPageIndices(); var wList=words.value.split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+            for(var i=0;i<idxs.length;i++){
+                var page=pdf.getPage(idxs[i]); var w=page.getWidth();
+                var y=page.getHeight()-50;
+                for(var j=0;j<wList.length;j++){
+                    page.drawRectangle({x:40,y:y-8,width:Math.min(wList[j].length*6,w-80),height:14,color:pdfLib.rgb(0,0,0)});
+                    y-=18;
+                }
+            }
+            var out=await pdf.save();
+            download(out,files[0].name.replace(/\.pdf$/i,'')+'_redacted.pdf');
+            setStatus(st,'Redacted '+wList.length+' term(s).','success');
+        }catch(e){ setStatus(st,'Error: '+e.message,'error'); }
+        btn.disabled=false;
+    });
+})();
+
+// ========== METADATA (Edit sub-tab) ==========
+(function(){
+    var files=[];
+    var zone=document.getElementById('metaDrop'); var list=document.getElementById('metaFiles');
+    var btn=document.getElementById('metaBtn'); var rst=document.getElementById('metaReset');
+    var title=document.getElementById('metaTitle'); var author=document.getElementById('metaAuthor');
+    var subject=document.getElementById('metaSubject'); var st=document.getElementById('editStatus');
+    setupDrop('metaDrop','metaFiles',function(f){ if(f.length) files=[f[0]]; loadMeta(); },false);
+    async function loadMeta(){
+        if(!files.length) return;
+        list.innerHTML=fileListHtml(files,false);
+        try{
+            var buf=await readFile(files[0]); var pdf=await pdfLib.PDFDocument.load(buf);
+            title.value=pdf.getTitle()||''; author.value=pdf.getAuthor()||''; subject.value=pdf.getSubject()||'';
+            btn.disabled=false;
+        }catch(e){ setStatus(st,'Error: '+e.message,'error'); }
+    }
+    rst.addEventListener('click',function(){ files=[]; list.innerHTML=''; title.value=''; author.value=''; subject.value=''; btn.disabled=true; st.className='ptool-status'; });
+    btn.addEventListener('click',async function(){
+        if(!files.length) return;
+        btn.disabled=true; setStatus(st,'Updating metadata...','info');
+        try{
+            var buf=await readFile(files[0]); var pdf=await pdfLib.PDFDocument.load(buf);
+            if(title.value.trim()) pdf.setTitle(title.value.trim());
+            if(author.value.trim()) pdf.setAuthor(author.value.trim());
+            if(subject.value.trim()) pdf.setSubject(subject.value.trim());
+            var out=await pdf.save();
+            download(out,files[0].name);
+            setStatus(st,'Metadata updated.','success');
+        }catch(e){ setStatus(st,'Error: '+e.message,'error'); }
+        btn.disabled=false;
+    });
+})();
+
+// ========== CONVERT: PDF TO IMAGES (Convert sub-tab) ==========
+(function(){
+    var files=[];
+    var zone=document.getElementById('p2iDrop'); var list=document.getElementById('p2iFiles');
+    var btn=document.getElementById('p2iBtn'); var rst=document.getElementById('p2iReset');
+    var fmt=document.getElementById('p2iFormat'); var scl=document.getElementById('p2iScale');
+    var out=document.getElementById('p2iOutput'); var st=document.getElementById('convertStatus');
+    setupDrop('p2iDrop','p2iFiles',function(f){ if(f.length) files=[f[0]]; render(); },false);
+    function render(){ list.innerHTML=fileListHtml(files,true); btn.disabled=files.length===0;
+        list.querySelectorAll('.remove').forEach(function(el){ el.addEventListener('click',function(){ files=[]; render(); }); }); }
+    rst.addEventListener('click',function(){ files=[]; render(); out.style.display='none'; out.innerHTML=''; st.className='ptool-status'; });
+    btn.addEventListener('click',async function(){
+        if(!files.length) return; btn.disabled=true; setStatus(st,'Rendering pages...','info');
+        out.style.display='none'; out.innerHTML='';
+        try{
+            var buf=await readFile(files[0]);
+            var pdfjs=window.pdfjsLib;
+            pdfjs.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+            var doc=await pdfjs.getDocument({data:buf}).promise;
+            var scale=parseFloat(scl.value); var type=fmt.value;
+            var name=files[0].name.replace(/\.pdf$/i,'');
+            var html='<div class="page-preview-grid">';
+            for(var i=1;i<=doc.numPages;i++){
+                var page=await doc.getPage(i); var vp=page.getViewport({scale:scale});
+                var canvas=document.createElement('canvas'); canvas.width=vp.width; canvas.height=vp.height;
+                var ctx=canvas.getContext('2d');
+                await page.render({canvasContext:ctx,viewport:vp}).promise;
+                var blob=await new Promise(function(r){ canvas.toBlob(r,'image/'+(type==='png'?'png':'jpeg'),0.92); });
+                var url=URL.createObjectURL(blob);
+                html+='<div class="page-preview"><img src="'+url+'" style="width:100%;display:block;" alt="Page '+i+'">'+
+                    '<span>Page '+i+'</span><br>'+
+                    '<a class="btn-reset" href="'+url+'" download="'+name+'_page'+i+'.'+type+'" style="display:inline-block;padding:4px 12px;margin-top:4px;font-size:11px;text-decoration:none;">Download</a></div>';
+            }
+            html+='</div>';
+            out.innerHTML=html; out.style.display='block';
+            setStatus(st,'Rendered '+doc.numPages+' page(s).','success');
+        }catch(e){ setStatus(st,'Error: '+e.message,'error'); }
+        btn.disabled=false;
+    });
+})();
+
+// ========== EXTRACT TEXT ==========
+(function(){
+    var files=[];
+    var zone=document.getElementById('etDrop'); var list=document.getElementById('etFiles');
+    var btn=document.getElementById('etBtn'); var rst=document.getElementById('etReset');
+    var out=document.getElementById('etOutput'); var ta=document.getElementById('etTextarea');
+    var cp=document.getElementById('etCopyBtn'); var st=document.getElementById('etStatus');
+    setupDrop('etDrop','etFiles',function(f){ if(f.length) files=[f[0]]; render(); },false);
+    function render(){ list.innerHTML=fileListHtml(files,true); btn.disabled=files.length===0;
+        list.querySelectorAll('.remove').forEach(function(el){ el.addEventListener('click',function(){ files=[]; out.style.display='none'; render(); }); }); }
+    rst.addEventListener('click',function(){ files=[]; render(); out.style.display='none'; ta.value=''; st.className='ptool-status'; });
+    cp.addEventListener('click',function(){ ta.select(); document.execCommand('copy'); setStatus(st,'Text copied.','success'); });
+    btn.addEventListener('click',async function(){
+        if(!files.length) return; btn.disabled=true; setStatus(st,'Extracting text...','info');
+        out.style.display='none'; ta.value='';
+        try{
+            var buf=await readFile(files[0]);
+            var pdfjs=window.pdfjsLib;
+            pdfjs.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+            var doc=await pdfjs.getDocument({data:buf}).promise;
+            var text='';
+            for(var i=1;i<=doc.numPages;i++){
+                var page=await doc.getPage(i);
+                var tc=await page.getTextContent();
+                text+='--- Page '+i+' ---\n';
+                tc.items.forEach(function(item){ text+=item.str+' '; });
+                text+='\n\n';
+            }
+            ta.value=text; out.style.display='block';
+            setStatus(st,'Extracted text from '+doc.numPages+' page(s).','success');
+        }catch(e){ setStatus(st,'Error: '+e.message,'error'); }
+        btn.disabled=false;
+    });
+})();
+
+// ========== INVERT COLORS ==========
+(function(){
+    var files=[];
+    var zone=document.getElementById('invertDrop'); var list=document.getElementById('invertFiles');
+    var btn=document.getElementById('invertBtn'); var rst=document.getElementById('invertReset');
+    var st=document.getElementById('invertStatus');
+    setupDrop('invertDrop','invertFiles',function(f){ if(f.length) files=[f[0]]; render(); },false);
+    function render(){ list.innerHTML=fileListHtml(files,true); btn.disabled=files.length===0;
+        list.querySelectorAll('.remove').forEach(function(el){ el.addEventListener('click',function(){ files=[]; render(); }); }); }
+    rst.addEventListener('click',function(){ files=[]; render(); st.className='ptool-status'; });
+    btn.addEventListener('click',async function(){
+        if(!files.length) return; btn.disabled=true; setStatus(st,'Inverting colors...','info');
+        try{
+            var buf=await readFile(files[0]);
+            var pdfjs=window.pdfjsLib;
+            pdfjs.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+            var doc=await pdfjs.getDocument({data:buf}).promise;
+            var outPdf=await pdfLib.PDFDocument.create();
+            for(var i=1;i<=doc.numPages;i++){
+                var pg=await doc.getPage(i); var vp=pg.getViewport({scale:2});
+                var c=document.createElement('canvas'); c.width=vp.width; c.height=vp.height;
+                var ctx=c.getContext('2d');
+                await pg.render({canvasContext:ctx,viewport:vp}).promise;
+                var id=ctx.getImageData(0,0,c.width,c.height);
+                for(var p=0;p<id.data.length;p+=4){
+                    id.data[p]=255-id.data[p];
+                    id.data[p+1]=255-id.data[p+1];
+                    id.data[p+2]=255-id.data[p+2];
+                }
+                ctx.putImageData(id,0,0);
+                var blob=await new Promise(function(r){ c.toBlob(r,'image/jpeg',0.92); });
+                var ab=await new Promise(function(r){
+                    var fr=new FileReader(); fr.onload=function(){ r(fr.result); }; fr.readAsArrayBuffer(blob);
+                });
+                var img=await outPdf.embedJpg(ab);
+                var page=outPdf.addPage([vp.width,vp.height]);
+                page.drawImage(img,{x:0,y:0,width:vp.width,height:vp.height});
+            }
+            var out=await outPdf.save();
+            download(out,files[0].name.replace(/\.pdf$/i,'')+'_inverted.pdf');
+            setStatus(st,'Colors inverted ('+doc.numPages+' pages).','success');
+        }catch(e){ setStatus(st,'Error: '+e.message,'error'); }
+        btn.disabled=false;
+    });
+})();
+
 })(50); // end initTools
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
