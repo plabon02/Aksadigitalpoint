@@ -147,22 +147,82 @@
 
         .back-link { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; color: var(--main-color); cursor: pointer; margin-bottom: 16px; font-weight: 500; text-decoration: none; }
         .back-link:hover { text-decoration: underline; }
+
+        /* --- iLovePDF-style Header Mega Menu --- */
+        .header-inner { max-width: 1200px; margin: 0 auto; width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; }
+        header .nav-left { display: flex; align-items: center; gap: 32px; }
+        header .nav-right { display: flex; align-items: center; gap: 12px; }
+        .mega-trigger {
+            display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 14px; font-weight: 500;
+            color: var(--font-color); padding: 6px 14px; border-radius: var(--radius-sm); transition: 0.2s;
+            position: relative;
+        }
+        .mega-trigger:hover { color: var(--main-color); background: rgba(230,0,109,0.04); }
+        .mega-menu {
+            position: absolute; top: 100%; left: 0; margin-top: 8px;
+            background: var(--white); border-radius: var(--radius); box-shadow: 0 12px 48px rgba(0,0,0,0.12);
+            border: 1px solid var(--card-border); padding: 24px;
+            display: none; z-index: 200; width: 640px;
+        }
+        .mega-trigger:hover .mega-menu,
+        .mega-trigger.active .mega-menu { display: block; }
+        .mega-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+        .mega-col h5 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--font-color); margin-bottom: 8px; }
+        .mega-item {
+            display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 6px;
+            font-size: 13px; transition: 0.15s; color: var(--font-light); cursor: default;
+        }
+        .mega-item i { font-size: 16px; color: var(--main-color); width: 20px; text-align: center; }
+        .mega-item:hover { background: rgba(230,0,109,0.04); color: var(--main-color); }
     </style>
 </head>
 <body>
 
 <header>
-    <a href="index.html" class="logo">AKSA DIGITAL POINT</a>
-    <ul class="navlist">
-        <li><a href="index.html#features">Features</a></li>
-        <li><a href="index.html#products">Add-ins</a></li>
-        <li><a href="index.html#pricing">Pricing</a></li>
-        <li><a href="request-key.html">Get License Key</a></li>
-    </ul>
-    <div class="right-header">
-        <a href="purchase.html" class="btn">Buy License <i class='bx bx-right-arrow-alt'></i></a>
-        <div class="menu-icon">
-            <div class="bar"></div>
+    <div class="header-inner">
+        <div class="nav-left">
+            <a href="index.html" class="logo">AKSA DIGITAL POINT</a>
+            <div class="mega-trigger">
+                <span>All PDF Tools <i class='bx bx-chevron-down' style="font-size:16px;"></i></span>
+                <div class="mega-menu">
+                    <div class="mega-grid">
+                        <div class="mega-col">
+                            <h5>Organize</h5>
+                            <div class="mega-item" data-tool="merge"><i class='bx bx-layer'></i> Merge PDF</div>
+                            <div class="mega-item" data-tool="split"><i class='bx bx-cut'></i> Split PDF</div>
+                            <div class="mega-item" data-tool="extract"><i class='bx bx-copy-alt'></i> Extract Pages</div>
+                            <div class="mega-item" data-tool="delete"><i class='bx bx-trash'></i> Delete Pages</div>
+                            <div class="mega-item" data-tool="reorder"><i class='bx bx-sort'></i> Reorder</div>
+                            <div class="mega-item" data-tool="nup"><i class='bx bx-grid-alt'></i> N-up Layout</div>
+                        </div>
+                        <div class="mega-col">
+                            <h5>Convert</h5>
+                            <div class="mega-item" data-tool="convert"><i class='bx bx-transfer-alt'></i> Convert to PDF</div>
+                            <div class="mega-item" data-tool="extracttext"><i class='bx bx-text'></i> Extract Text</div>
+                            <h5 style="margin-top:14px;">Security</h5>
+                            <div class="mega-item" data-tool="redact"><i class='bx bx-hide'></i> Redact</div>
+                        </div>
+                        <div class="mega-col">
+                            <h5>Edit</h5>
+                            <div class="mega-item" data-tool="rotate"><i class='bx bx-rotate-right'></i> Rotate</div>
+                            <div class="mega-item" data-tool="crop"><i class='bx bx-crop'></i> Crop</div>
+                            <div class="mega-item" data-tool="resize"><i class='bx bx-expand'></i> Resize</div>
+                            <div class="mega-item" data-tool="sign"><i class='bx bx-pen'></i> Sign</div>
+                            <div class="mega-item" data-tool="overlay"><i class='bx bx-layers'></i> Overlay</div>
+                            <div class="mega-item" data-tool="invert"><i class='bx bx-palette'></i> Invert Colors</div>
+                            <div class="mega-item" data-tool="edit"><i class='bx bx-edit-alt'></i> Edit (Watermark, Numbers, etc.)</div>
+                            <h5 style="margin-top:8px;">Info &amp; View</h5>
+                            <div class="mega-item" data-tool="info"><i class='bx bx-info-circle'></i> PDF Info</div>
+                            <div class="mega-item" data-tool="view"><i class='bx bx-show'></i> PDF Viewer</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="nav-right">
+            <a href="index.html" style="font-size:13px;font-weight:500;color:var(--font-color);transition:0.2s;">Home</a>
+            <a href="request-key.html" style="font-size:13px;font-weight:500;color:var(--font-color);transition:0.2s;">Get License</a>
+            <a href="purchase.html" class="btn">Buy License <i class='bx bx-right-arrow-alt'></i></a>
         </div>
     </div>
 </header>
@@ -772,6 +832,29 @@
         backBtn.innerHTML='<i class="bx bx-arrow-back"></i> All Tools';
         box.insertBefore(backBtn,box.firstChild);
         backBtn.addEventListener('click',function(e){ e.preventDefault(); showHub(); });
+    });
+
+    // Mega-menu item clicks
+    document.querySelectorAll('.mega-item[data-tool]').forEach(function(item){
+        item.addEventListener('click',function(e){
+            e.stopPropagation();
+            var id=this.dataset.tool;
+            showPanel(id);
+        });
+    });
+
+    // Mega-trigger click toggle (for touch devices)
+    var trigger=document.querySelector('.mega-trigger');
+    trigger.addEventListener('click',function(e){
+        if(window.innerWidth<768){
+            e.preventDefault();
+            this.classList.toggle('active');
+        }
+    });
+
+    // Close mega-menu on outside click
+    document.addEventListener('click',function(e){
+        if(!trigger.contains(e.target)) trigger.classList.remove('active');
     });
 })();
 
