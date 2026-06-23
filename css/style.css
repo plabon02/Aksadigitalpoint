@@ -243,10 +243,14 @@ header .btn:hover { box-shadow: var(--hover-shadow); transform: translateY(-2px)
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0;
-    transition: opacity 0.6s ease-in-out;
+    display: none;
 }
-.slide-img.active { opacity: 1; }
+.slide-img.active { display: block; animation: sliderFade 0.5s ease; }
+
+@keyframes sliderFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
 
 .slider-arrow {
     position: absolute;
