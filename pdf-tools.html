@@ -123,6 +123,8 @@
             <button class="ptool-tab" data-tab="rotate"><i class='bx bx-rotate-right'></i> Rotate</button>
             <button class="ptool-tab" data-tab="info"><i class='bx bx-info-circle'></i> Info</button>
             <button class="ptool-tab" data-tab="view"><i class='bx bx-show'></i> View</button>
+            <button class="ptool-tab" data-tab="convert"><i class='bx bx-transfer-alt'></i> Convert</button>
+            <button class="ptool-tab" data-tab="edit"><i class='bx bx-edit-alt'></i> Edit</button>
         </div>
 
         <!-- MERGE -->
@@ -242,6 +244,111 @@
                     </div>
                 </div>
                 <div class="ptool-status" id="viewStatus"></div>
+            </div>
+        </div>
+
+        <!-- CONVERT -->
+        <div class="ptool-panel" id="panel-convert">
+            <div class="ptool-box">
+                <h3>Convert to PDF</h3>
+                <p class="desc">Convert images or text to PDF.</p>
+
+                <div class="ptool-tabs" style="margin-bottom:16px;">
+                    <button class="ptool-tab active" data-subtab="img2pdf" style="font-size:12px;padding:6px 16px;">Images → PDF</button>
+                    <button class="ptool-tab" data-subtab="text2pdf" style="font-size:12px;padding:6px 16px;">Text → PDF</button>
+                </div>
+
+                <div id="sub-img2pdf">
+                    <div class="drop-zone" id="imgDrop">
+                        <i class='bx bx-image'></i>
+                        <p>Drop images here or click to select (PNG, JPG)</p>
+                    </div>
+                    <div class="file-list" id="imgFiles"></div>
+                    <div class="ptool-actions">
+                        <button class="btn-process" id="img2pdfBtn" disabled><i class='bx bx-transfer-alt'></i> Create PDF</button>
+                        <button class="btn-reset" id="imgReset"><i class='bx bx-reset'></i> Clear</button>
+                    </div>
+                </div>
+
+                <div id="sub-text2pdf" style="display:none;">
+                    <label style="font-size:13px;font-weight:500;display:block;margin-bottom:6px;">Enter or paste your text:</label>
+                    <textarea id="textInput" class="ptool-input" rows="8" placeholder="Type or paste text here..." style="resize:vertical;"></textarea>
+                    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;">
+                        <div><label style="font-size:12px;display:block;margin-bottom:4px;">Title:</label><input id="pdfTitle" class="ptool-input" value="Document" style="max-width:200px;margin:0;"></div>
+                        <div><label style="font-size:12px;display:block;margin-bottom:4px;">Font Size:</label><select id="fontSize" class="ptool-input" style="max-width:100px;margin:0;"><option>12</option><option selected>14</option><option>16</option><option>18</option><option>24</option></select></div>
+                    </div>
+                    <div class="ptool-actions">
+                        <button class="btn-process" id="text2pdfBtn"><i class='bx bx-transfer-alt'></i> Create PDF</button>
+                        <button class="btn-reset" id="textReset"><i class='bx bx-reset'></i> Clear</button>
+                    </div>
+                </div>
+
+                <div class="ptool-status" id="convertStatus"></div>
+            </div>
+        </div>
+
+        <!-- EDIT -->
+        <div class="ptool-panel" id="panel-edit">
+            <div class="ptool-box">
+                <h3>Edit PDF</h3>
+                <p class="desc">Add page numbers or watermarks to your PDF.</p>
+
+                <div class="ptool-tabs" style="margin-bottom:16px;">
+                    <button class="ptool-tab active" data-subtab="pageNum" style="font-size:12px;padding:6px 16px;">Page Numbers</button>
+                    <button class="ptool-tab" data-subtab="watermark" style="font-size:12px;padding:6px 16px;">Watermark</button>
+                </div>
+
+                <div id="sub-pageNum">
+                    <div class="drop-zone" id="numDrop">
+                        <i class='bx bx-cloud-upload'></i>
+                        <p>Drop a PDF file here or click to select</p>
+                    </div>
+                    <div class="file-list" id="numFiles"></div>
+                    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
+                        <div><label style="font-size:12px;display:block;margin-bottom:4px;">Position:</label>
+                            <select id="numPosition" class="ptool-input" style="max-width:150px;margin:0;">
+                                <option value="bottom">Bottom Center</option>
+                                <option value="bottomRight">Bottom Right</option>
+                                <option value="top">Top Center</option>
+                                <option value="topRight">Top Right</option>
+                            </select>
+                        </div>
+                        <div><label style="font-size:12px;display:block;margin-bottom:4px;">Start from:</label>
+                            <input id="numStart" class="ptool-input" type="number" value="1" min="1" style="max-width:80px;margin:0;">
+                        </div>
+                    </div>
+                    <div class="ptool-actions">
+                        <button class="btn-process" id="numBtn" disabled><i class='bx bx-list-ol'></i> Add Numbers</button>
+                        <button class="btn-reset" id="numReset"><i class='bx bx-reset'></i> Clear</button>
+                    </div>
+                </div>
+
+                <div id="sub-watermark" style="display:none;">
+                    <div class="drop-zone" id="wmDrop">
+                        <i class='bx bx-cloud-upload'></i>
+                        <p>Drop a PDF file here or click to select</p>
+                    </div>
+                    <div class="file-list" id="wmFiles"></div>
+                    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
+                        <div style="flex:1;"><label style="font-size:12px;display:block;margin-bottom:4px;">Watermark Text:</label>
+                            <input id="wmText" class="ptool-input" type="text" value="CONFIDENTIAL" style="margin:0;">
+                        </div>
+                        <div><label style="font-size:12px;display:block;margin-bottom:4px;">Opacity:</label>
+                            <select id="wmOpacity" class="ptool-input" style="max-width:100px;margin:0;">
+                                <option value="0.1">10%</option>
+                                <option value="0.2">20%</option>
+                                <option value="0.3" selected>30%</option>
+                                <option value="0.5">50%</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="ptool-actions">
+                        <button class="btn-process" id="wmBtn" disabled><i class='bx bx-tint'></i> Add Watermark</button>
+                        <button class="btn-reset" id="wmReset"><i class='bx bx-reset'></i> Clear</button>
+                    </div>
+                </div>
+
+                <div class="ptool-status" id="editStatus"></div>
             </div>
         </div>
     </div>
@@ -575,6 +682,226 @@ function fileListHtml(files, removable) {
 
     prevBtn.addEventListener('click',function(){ if(curPage>1){ curPage--; renderPage(); } });
     nextBtn.addEventListener('click',function(){ if(curPage<pdfDoc.numPages){ curPage++; renderPage(); } });
+})();
+
+// ========== SUB-TABS (Convert + Edit) ==========
+document.querySelectorAll('.ptool-box .ptool-tabs').forEach(function(bar){
+    bar.querySelectorAll('.ptool-tab').forEach(function(tab){
+        tab.addEventListener('click', function(){
+            var parent=this.closest('.ptool-box');
+            parent.querySelectorAll('.ptool-tabs .ptool-tab').forEach(function(t){ t.classList.remove('active'); });
+            parent.querySelectorAll('[id^="sub-"]').forEach(function(p){ p.style.display='none'; });
+            this.classList.add('active');
+            var sub=document.getElementById('sub-'+this.getAttribute('data-subtab'));
+            if(sub) sub.style.display='block';
+        });
+    });
+});
+
+// ========== CONVERT: IMAGES TO PDF ==========
+(function(){
+    var files=[];
+    var zone=document.getElementById('imgDrop');
+    var list=document.getElementById('imgFiles');
+    var btn=document.getElementById('img2pdfBtn');
+    var rst=document.getElementById('imgReset');
+    var st=document.getElementById('convertStatus');
+
+    var input=document.createElement('input'); input.type='file'; input.accept='image/*'; input.multiple=true;
+    zone.appendChild(input);
+    zone.addEventListener('click',function(){ input.click(); });
+    zone.addEventListener('dragover',function(e){ e.preventDefault(); zone.classList.add('dragover'); });
+    zone.addEventListener('dragleave',function(){ zone.classList.remove('dragover'); });
+    zone.addEventListener('drop',function(e){ e.preventDefault(); zone.classList.remove('dragover'); addFiles(e.dataTransfer.files); });
+    input.addEventListener('change',function(){ addFiles(input.files); input.value=''; });
+
+    function addFiles(f){
+        for(var i=0;i<f.length;i++) if(f[i].type.startsWith('image/')) files.push(f[i]);
+        render();
+    }
+
+    function render(){
+        list.innerHTML='';
+        for(var i=0;i<files.length;i++){
+            var div=document.createElement('div');
+            div.className='file-item';
+            div.innerHTML='<span class="name">'+(i+1)+'. '+files[i].name+'</span><span class="size">'+bytes(files[i].size)+'</span><span class="remove" data-idx="'+i+'">&times;</span>';
+            list.appendChild(div);
+        }
+        btn.disabled=files.length===0;
+        list.querySelectorAll('.remove').forEach(function(el){
+            el.addEventListener('click',function(){ files.splice(parseInt(el.getAttribute('data-idx')),1); render(); });
+        });
+    }
+
+    rst.addEventListener('click',function(){ files=[]; render(); st.className='ptool-status'; });
+
+    btn.addEventListener('click',async function(){
+        if(!files.length) return;
+        btn.disabled=true; setStatus(st,'Creating PDF from images...','info');
+        try{
+            var pdf=await pdfLib.PDFDocument.create();
+            for(var i=0;i<files.length;i++){
+                var buf=await readFile(files[i]);
+                var img=null;
+                if(files[i].type==='image/png'){
+                    img=await pdf.embedPng(buf);
+                }else{
+                    img=await pdf.embedJpg(buf);
+                }
+                var page=pdf.addPage([img.width,img.height]);
+                page.drawImage(img,{x:0,y:0,width:img.width,height:img.height});
+            }
+            var out=await pdf.save();
+            download(out,'images.pdf');
+            setStatus(st,'Created PDF with '+files.length+' page(s).','success');
+        }catch(e){ setStatus(st,'Error: '+e.message,'error'); }
+        btn.disabled=false;
+    });
+})();
+
+// ========== CONVERT: TEXT TO PDF ==========
+(function(){
+    var btn=document.getElementById('text2pdfBtn');
+    var rst=document.getElementById('textReset');
+    var txt=document.getElementById('textInput');
+    var title=document.getElementById('pdfTitle');
+    var size=document.getElementById('fontSize');
+    var st=document.getElementById('convertStatus');
+
+    btn.addEventListener('click',async function(){
+        if(!txt.value.trim()){ setStatus(st,'Please enter some text.','error'); return; }
+        btn.disabled=true; setStatus(st,'Creating PDF from text...','info');
+        try{
+            var pdf=await pdfLib.PDFDocument.create();
+            var fs=parseInt(size.value);
+            var lines=txt.value.split('\n');
+            var chunkSize=40;
+            for(var c=0;c<lines.length;c+=chunkSize){
+                var chunk=lines.slice(c,c+chunkSize);
+                var page=pdf.addPage([pdfLib.PageSizes.A4[0],pdfLib.PageSizes.A4[1]]);
+                var font=await pdf.embedFont(pdfLib.StandardFonts.Helvetica);
+                var y=page.getHeight()-50;
+                for(var i=0;i<chunk.length;i++){
+                    page.drawText(chunk[i]||' ',{x:50,y:y,size:fs,font:font,color:pdfLib.rgb(0,0,0)});
+                    y-=fs*1.5;
+                }
+            }
+            pdf.setTitle(title.value||'Document');
+            var out=await pdf.save();
+            download(out,(title.value||'document').replace(/\s+/g,'_')+'.pdf');
+            setStatus(st,'PDF created successfully.','success');
+        }catch(e){ setStatus(st,'Error: '+e.message,'error'); }
+        btn.disabled=false;
+    });
+
+    rst.addEventListener('click',function(){ txt.value=''; st.className='ptool-status'; });
+})();
+
+// ========== EDIT: ADD PAGE NUMBERS ==========
+(function(){
+    var files=[];
+    var zone=document.getElementById('numDrop');
+    var list=document.getElementById('numFiles');
+    var btn=document.getElementById('numBtn');
+    var rst=document.getElementById('numReset');
+    var pos=document.getElementById('numPosition');
+    var start=document.getElementById('numStart');
+    var st=document.getElementById('editStatus');
+
+    setupDrop('numDrop','numFiles',function(f){ if(f.length) files=[f[0]]; render(); },false);
+
+    function render(){
+        list.innerHTML=fileListHtml(files,true);
+        btn.disabled=files.length===0;
+        list.querySelectorAll('.remove').forEach(function(el){
+            el.addEventListener('click',function(){ files=[]; render(); });
+        });
+    }
+
+    rst.addEventListener('click',function(){ files=[]; render(); st.className='ptool-status'; });
+
+    btn.addEventListener('click',async function(){
+        if(!files.length) return;
+        btn.disabled=true; setStatus(st,'Adding page numbers...','info');
+        try{
+            var buf=await readFile(files[0]);
+            var pdf=await pdfLib.PDFDocument.load(buf);
+            var font=await pdf.embedFont(pdfLib.StandardFonts.Helvetica);
+            var sn=parseInt(start.value)||1;
+            var idxs=pdf.getPageIndices();
+            for(var i=0;i<idxs.length;i++){
+                var page=pdf.getPage(idxs[i]);
+                var w=page.getWidth();
+                var text=(sn+i).toString();
+                var x; var y;
+                switch(pos.value){
+                    case 'bottom': x=w/2-10; y=30; break;
+                    case 'bottomRight': x=w-50; y=30; break;
+                    case 'top': x=w/2-10; y=page.getHeight()-40; break;
+                    case 'topRight': x=w-50; y=page.getHeight()-40; break;
+                }
+                page.drawText(text,{x:x,y:y,size:10,font:font,color:pdfLib.rgb(0.4,0.4,0.4)});
+            }
+            var out=await pdf.save();
+            download(out,files[0].name.replace(/\.pdf$/i,'')+'_numbered.pdf');
+            setStatus(st,'Added page numbers.','success');
+        }catch(e){ setStatus(st,'Error: '+e.message,'error'); }
+        btn.disabled=false;
+    });
+})();
+
+// ========== EDIT: WATERMARK ==========
+(function(){
+    var files=[];
+    var zone=document.getElementById('wmDrop');
+    var list=document.getElementById('wmFiles');
+    var btn=document.getElementById('wmBtn');
+    var rst=document.getElementById('wmReset');
+    var wmText=document.getElementById('wmText');
+    var wmOpacity=document.getElementById('wmOpacity');
+    var st=document.getElementById('editStatus');
+
+    setupDrop('wmDrop','wmFiles',function(f){ if(f.length) files=[f[0]]; render(); },false);
+
+    function render(){
+        list.innerHTML=fileListHtml(files,true);
+        btn.disabled=files.length===0;
+        list.querySelectorAll('.remove').forEach(function(el){
+            el.addEventListener('click',function(){ files=[]; render(); });
+        });
+    }
+
+    rst.addEventListener('click',function(){ files=[]; render(); st.className='ptool-status'; });
+
+    btn.addEventListener('click',async function(){
+        if(!files.length){ setStatus(st,'Please select a PDF file.','error'); return; }
+        if(!wmText.value.trim()){ setStatus(st,'Please enter watermark text.','error'); return; }
+        btn.disabled=true; setStatus(st,'Adding watermark...','info');
+        try{
+            var buf=await readFile(files[0]);
+            var pdf=await pdfLib.PDFDocument.load(buf);
+            var font=await pdf.embedFont(pdfLib.StandardFonts.HelveticaBold);
+            var opacity=parseFloat(wmOpacity.value);
+            var text=wmText.value;
+            var idxs=pdf.getPageIndices();
+            for(var i=0;i<idxs.length;i++){
+                var page=pdf.getPage(idxs[i]);
+                var w=page.getWidth();
+                var h=page.getHeight();
+                page.drawText(text,{
+                    x:w/2-30,y:h/2,size:36,font:font,
+                    color:pdfLib.rgb(0.7,0.7,0.7),
+                    opacity:opacity,
+                    rotate:pdfLib.degrees(-30)
+                });
+            }
+            var out=await pdf.save();
+            download(out,files[0].name.replace(/\.pdf$/i,'')+'_watermarked.pdf');
+            setStatus(st,'Watermark added.','success');
+        }catch(e){ setStatus(st,'Error: '+e.message,'error'); }
+        btn.disabled=false;
+    });
 })();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
